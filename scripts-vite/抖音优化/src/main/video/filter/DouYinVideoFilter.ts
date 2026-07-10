@@ -731,7 +731,8 @@ export const DouYinVideoFilter = {
     });
     return [
       addStyle(/*css*/ `
-      xg-icon .xg-tips{
+      xg-icon .xg-tips,
+      [data-e2e="living-container"] .gm-video-filter-parse-btn{
         display: none;
       }
 			.basePlayerContainer .gm-video-filter-parse-btn{

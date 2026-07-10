@@ -217,7 +217,7 @@ export const PanelLiveConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("三屏画面", "dy-live-threeScreen", false, void 0, "S"),
                 UISwitch("刷新", "dy-live-refresh", false, void 0, "R"),
@@ -295,7 +295,7 @@ export const PanelLiveConfig: PopsPanelContentConfig = {
           afterEnterDeepMenuCallBack: AutoOpenOrClose.afterEnterDeepMenuCallBack,
           views: [
             {
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               type: "container",
               views: [
                 UISwitch(
@@ -349,7 +349,7 @@ export const PanelLiveConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [UISwitch("【屏蔽】播放器组件", "dy-live-player-block", false, void 0, "整个播放器组件")],
             },
             {
@@ -383,7 +383,7 @@ export const PanelLiveConfig: PopsPanelContentConfig = {
           afterEnterDeepMenuCallBack: AutoOpenOrClose.afterEnterDeepMenuCallBack,
           views: [
             {
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               type: "container",
               views: [
                 UISwitch("【屏蔽】聊天室", "live-shieldChatRoom"),

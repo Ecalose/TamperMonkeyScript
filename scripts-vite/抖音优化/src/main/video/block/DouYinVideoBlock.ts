@@ -104,6 +104,13 @@ export const DouYinVideoBlock = {
           '[data-e2e="video-detail"] .video-detail-container > div > div > div:nth-child(2):has( div> input[data-e2e="searchbar-input"])'
         )
       );
+    } else if (DouYinRouter.isNote()) {
+      // 单个笔记页面，但这个笔记可能包含了视频
+      // 视频+图片
+      // 图片
+      result.push(
+        addBlockCSS('.note-detail-container > div > div:has( > div > div input[data-e2e="searchbar-input"])')
+      );
     } else if (DouYinRouter.isJingXuan() || DouYinRouter.isHot()) {
       // 精选
       // 热点榜

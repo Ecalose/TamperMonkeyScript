@@ -3,32 +3,31 @@ import { DouYinRouter } from "@/router/DouYinRouter";
 import { addBlockCSS } from "@components/env.base";
 import { Panel } from "@components/setting/panel";
 
-/** 顶部导航栏屏蔽 */
 export const BlockTopNavigator = {
   init() {
-    Panel.exec(
-      ["shieldTopNavigator", "search-shieldTopNavigator"],
-      () => {
-        return this.shieldTopNavigator();
-      },
-      (keyList) => {
-        const [mainKey, childKey] = keyList;
-        const mainValue = Panel.getValue<boolean>(mainKey);
-        const childValue = Panel.getValue<number>(childKey);
-        if (DouYinRouter.isSearch()) {
-          if (childValue == 1) {
-            // 开
-            return true;
-          } else if (childValue == 0) {
-            // 关
-            return false;
-          } else {
-            // 跟随主设置
-          }
-        }
-        return mainValue;
-      }
-    );
+    // Panel.exec(
+    //   ["shieldTopNavigator", "search-shieldTopNavigator"],
+    //   () => {
+    //     return this.shieldTopNavigator();
+    //   },
+    //   (keyList) => {
+    //     const [mainKey, childKey] = keyList;
+    //     const mainValue = Panel.getValue<boolean>(mainKey);
+    //     const childValue = Panel.getValue<number>(childKey);
+    //     if (DouYinRouter.isSearch()) {
+    //       if (childValue == 1) {
+    //         // 开
+    //         return true;
+    //       } else if (childValue == 0) {
+    //         // 关
+    //         return false;
+    //       } else {
+    //         // 跟随主设置
+    //       }
+    //     }
+    //     return mainValue;
+    //   }
+    // );
     Panel.execMenuOnce(
       "shieldClientTip",
       () => {

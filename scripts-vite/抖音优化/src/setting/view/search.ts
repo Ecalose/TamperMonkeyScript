@@ -108,7 +108,7 @@ export const PanelSearchConfig: PopsPanelContentConfig = {
           afterEnterDeepMenuCallBack: AutoOpenOrClose.afterEnterDeepMenuCallBack,
           views: [
             {
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               type: "container",
               views: [
                 UISwitch(
@@ -176,39 +176,39 @@ export const PanelSearchConfig: PopsPanelContentConfig = {
             },
           ],
         },
-        {
-          text: "布局屏蔽-顶部导航栏",
-          type: "deepMenu",
-          views: [
-            {
-              text: "",
-              type: "container",
-              views: [
-                UISelect(
-                  "【屏蔽】顶部导航栏",
-                  "search-shieldTopNavigator",
-                  -1,
-                  () => [
-                    {
-                      text: `跟随主设置（${PopsPanelStorageApi.get("shieldTopNavigator") ? "是" : "否"}）`,
-                      value: -1,
-                    },
-                    {
-                      text: "是",
-                      value: 1,
-                    },
-                    {
-                      text: "否",
-                      value: 0,
-                    },
-                  ],
-                  void 0,
-                  ["通用", "布局屏蔽-顶部导航栏", "【屏蔽】顶部导航栏"].map((it) => `<code>${it}</code>`).join("-")
-                ),
-              ],
-            },
-          ],
-        },
+        // {
+        //   text: "布局屏蔽-顶部导航栏",
+        //   type: "deepMenu",
+        //   views: [
+        //     {
+        //       text: "",
+        //       type: "container",
+        //       views: [
+        //         UISelect(
+        //           "【屏蔽】顶部导航栏",
+        //           "search-shieldTopNavigator",
+        //           -1,
+        //           () => [
+        //             {
+        //               text: `跟随主设置（${PopsPanelStorageApi.get("shieldTopNavigator") ? "是" : "否"}）`,
+        //               value: -1,
+        //             },
+        //             {
+        //               text: "是",
+        //               value: 1,
+        //             },
+        //             {
+        //               text: "否",
+        //               value: 0,
+        //             },
+        //           ],
+        //           void 0,
+        //           ["通用", "布局屏蔽-顶部导航栏", "【屏蔽】顶部导航栏"].map((it) => `<code>${it}</code>`).join("-")
+        //         ),
+        //       ],
+        //     },
+        //   ],
+        // },
       ],
     },
   ],

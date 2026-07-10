@@ -205,15 +205,15 @@ export const PanelGeneralConfig: PopsPanelContentConfig = {
                   void 0,
                   DouYinShortCut.shortCut
                 ),
-                UIButtonShortCut(
-                  "【屏蔽】顶部导航栏",
-                  void 0,
-                  "shortcut-shieldTopNavigator",
-                  void 0,
-                  "点击录入快捷键",
-                  void 0,
-                  DouYinShortCut.shortCut
-                ),
+                // UIButtonShortCut(
+                //   "【屏蔽】顶部导航栏",
+                //   void 0,
+                //   "shortcut-shieldTopNavigator",
+                //   void 0,
+                //   "点击录入快捷键",
+                //   void 0,
+                //   DouYinShortCut.shortCut
+                // ),
               ],
             },
           ],
@@ -230,7 +230,7 @@ export const PanelGeneralConfig: PopsPanelContentConfig = {
             },
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("赞|取消赞", "dy-keyboard-hook-likeOrDislike", false, void 0, "Z/双击空格"),
                 UISwitch("评论", "dy-keyboard-hook-comment", false, void 0, "X"),
@@ -281,7 +281,7 @@ export const PanelGeneralConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch(
                   "【屏蔽】登录弹窗",
@@ -303,7 +303,7 @@ export const PanelGeneralConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [UISwitch("【屏蔽】左侧导航栏", "shieldLeftNavigator")],
             },
             {
@@ -359,16 +359,16 @@ export const PanelGeneralConfig: PopsPanelContentConfig = {
           afterEnterDeepMenuCallBack: AutoOpenOrClose.afterEnterDeepMenuCallBack,
           views: [
             {
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               type: "container",
               views: [
-                UISwitch(
-                  "【屏蔽】顶部导航栏",
-                  "shieldTopNavigator",
-                  false,
-                  undefined,
-                  "不建议开启，会导致推荐列表的视频逐渐错位"
-                ),
+                // UISwitch(
+                //   "【屏蔽】顶部导航栏",
+                //   "shieldTopNavigator",
+                //   false,
+                //   undefined,
+                //   "不建议开启，会导致推荐列表的视频逐渐错位"
+                // ),
                 UISwitch("【屏蔽】顶部右侧的菜单栏", "shield-topNav-rightMenu"),
               ],
             },
@@ -397,7 +397,7 @@ export const PanelGeneralConfig: PopsPanelContentConfig = {
           afterEnterDeepMenuCallBack: AutoOpenOrClose.afterEnterDeepMenuCallBack,
           views: [
             {
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               type: "container",
               views: [
                 UISwitch("【屏蔽】搜索框", "shieldSearch"),

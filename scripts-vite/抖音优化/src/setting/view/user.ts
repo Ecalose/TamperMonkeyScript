@@ -36,7 +36,7 @@ export const PanelUserConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("【屏蔽】用户名", "dy-user-block-name"),
                 UISwitch("【屏蔽】关注", "dy-user-block-follow"),
@@ -67,7 +67,7 @@ export const PanelUserConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("【屏蔽】作品", "dy-user-works-block-works"),
                 UISwitch("【屏蔽】推荐", "dy-user-works-block-recommend"),

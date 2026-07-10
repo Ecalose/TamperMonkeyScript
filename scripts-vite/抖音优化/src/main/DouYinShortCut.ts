@@ -23,14 +23,14 @@ export const DouYinShortCut = {
           Panel.setValue(KEY, !enable);
         },
       },
-      "shortcut-shieldTopNavigator": {
-        callback() {
-          log.info("触发快捷键 ==> 【屏蔽】顶部导航栏");
-          const KEY = "shieldTopNavigator";
-          const enable = Panel.getValue(KEY);
-          Panel.setValue(KEY, !enable);
-        },
-      },
+      // "shortcut-shieldTopNavigator": {
+      //   callback() {
+      //     log.info("触发快捷键 ==> 【屏蔽】顶部导航栏");
+      //     const KEY = "shieldTopNavigator";
+      //     const enable = Panel.getValue(KEY);
+      //     Panel.setValue(KEY, !enable);
+      //   },
+      // },
     };
   },
 };

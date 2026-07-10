@@ -1,4 +1,4 @@
-import { DOMUtils } from "@/env";
+import { DOMUtils, utils } from "@/env";
 import type { PopsPanelDeepViewConfig } from "@whitesev/pops/dist/types/src/components/panel/types/components-deepMenu.js";
 
 const afterEnterDeepMenuCallBack: PopsPanelDeepViewConfig["afterEnterDeepMenuCallBack"] = (formConfig, container) => {
@@ -29,11 +29,21 @@ const afterEnterDeepMenuCallBack: PopsPanelDeepViewConfig["afterEnterDeepMenuCal
   });
 };
 export const AutoOpenOrClose = {
-  text: /*html*/ `
+  text: (text?: string) => {
+    return /*html*/ `
 		<p>注：开启是启用该功能、关闭是不启用|不执行该功能</p>
-        <a href="javascript:;" class="keyboard-oneClickOpen">一键全部开启</a>
-        <br>
-        <a href="javascript:;" class="keyboard-oneClickClose">一键全部关闭</a>
-    `,
+    <a href="javascript:;" class="keyboard-oneClickOpen">一键全部开启</a>
+    <br>
+    <a href="javascript:;" class="keyboard-oneClickClose">一键全部关闭</a>
+    ${
+      utils.isNull(text)
+        ? ""
+        : /*html*/ `
+      <br>
+      <p>${text}</p>
+    `
+    }
+    `;
+  },
   afterEnterDeepMenuCallBack: afterEnterDeepMenuCallBack,
 };

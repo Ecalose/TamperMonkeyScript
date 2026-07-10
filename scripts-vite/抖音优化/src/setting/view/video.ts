@@ -554,7 +554,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("上翻页", "dy-keyboard-hook-arrowUp-w", false, void 0, "W"),
                 UISwitch("下翻页", "dy-keyboard-hook-arrowDown-s", false, void 0, "S"),
@@ -618,7 +618,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
           afterEnterDeepMenuCallBack: AutoOpenOrClose.afterEnterDeepMenuCallBack,
           views: [
             {
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               type: "container",
               views: [
                 UISwitch(
@@ -656,7 +656,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("【屏蔽】视频信息", "dy-video-bottom-shieldVideoInfoWrap", false),
                 UISwitch(
@@ -698,7 +698,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("【屏蔽】播放器组件", "shieldBottomVideoToolBar", false, void 0, "整个播放器组件"),
                 UISwitch("【屏蔽】播放", "shieldBottomVideoToolBar-play", false, void 0, "播放|暂停按钮"),
@@ -727,7 +727,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("【屏蔽】清屏", "dy-video-player-block-right-menu-clearScreen"),
                 UISwitch("【屏蔽】评论", "dy-video-player-block-right-menu-comment"),
@@ -759,7 +759,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch("【屏蔽】右侧的展开评论按钮", "shieldRightExpandCommentButton"),
                 UISwitch("【屏蔽】搜索悬浮栏", "shieldSearchFloatingBar", false, void 0, "一般出现在左上角"),
@@ -797,7 +797,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text("顶部的TAB"),
               views: [
                 UISwitch("【屏蔽】详情", "dy-video-comment-blockDetails"),
                 UISwitch("【屏蔽】TA的作品", "dy-video-comment-blockTAWork"),
@@ -810,7 +810,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
             },
             {
               type: "container",
-              text: "",
+              text: "评论下方的工具栏",
               views: [
                 UISwitch("【屏蔽】回复", "dy-video-comment-blockReply"),
                 UISwitch("【屏蔽】分享", "dy-video-comment-blockShare"),
@@ -820,7 +820,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
             },
             {
               type: "container",
-              text: "",
+              text: "其它",
               views: [
                 UISwitch("【屏蔽】底部的评论工具栏", "dy-video-shieldUserCommentToolBar"),
                 UISwitch(
@@ -841,7 +841,7 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
           views: [
             {
               type: "container",
-              text: AutoOpenOrClose.text,
+              text: AutoOpenOrClose.text(),
               views: [
                 UISwitch(
                   "【屏蔽】点击或按<code>F</code>进入直播间",
