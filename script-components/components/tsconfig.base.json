@@ -16,7 +16,7 @@
     "allowJs": true,
     "checkJs": true,
     "allowSyntheticDefaultImports": true,
-    "importsNotUsedAsValues": "remove",
+    "verbatimModuleSyntax": true,
     "sourceMap": false,
     "typeRoots": ["types"],
     "rootDir": "./../../"
