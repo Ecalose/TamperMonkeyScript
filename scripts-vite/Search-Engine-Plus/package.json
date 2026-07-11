@@ -1,0 +1,19 @@
+{
+  "name": "search-engine-plus",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "check": "pnpm run format && vue-tsc",
+    "dev": "vue-tsc --noEmit && vite --force",
+    "format": "oxfmt . --write --config ./../../.oxfmtrc.jsonc",
+    "format:dist": "oxfmt dist --write --config ./../../.oxfmtrc.jsonc",
+    "build": "pnpm run format && vue-tsc --noEmit && vite build && pnpm run format:dist",
+    "build:min": "pnpm run format && vue-tsc --noEmit && vite build --minify && pnpm run format:dist",
+    "build:all": "pnpm run format && vue-tsc --noEmit && vite build && vite build --minify --no-empty-outDir && pnpm run format:dist",
+    "build:all-new": "pnpm run format && vue-tsc --noEmit && vite build && vite build --minify --no-empty-outDir && pnpm run format:dist",
+    "build:no-cache": "pnpm run format && pnpm store prune && vue-tsc --noEmit && vite build && pnpm run format:dist",
+    "build:watch": "pnpm run format && vue-tsc --noEmit && vite build --watch",
+    "preview": "pnpm run format && vite preview --host 0.0.0.0"
+  }
+}

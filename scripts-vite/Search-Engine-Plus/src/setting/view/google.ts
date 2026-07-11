@@ -1,0 +1,58 @@
+import { SearchEngineRouter } from "@/router/SearchEngineRouter";
+import { UISelect, UISwitch } from "@components/setting/panel-components";
+import type { PopsPanelContentConfig } from "@whitesev/pops/dist/types/src/components/panel/types/index.js";
+
+export const Component_Google: PopsPanelContentConfig = {
+  id: "google",
+  title: "Google搜索",
+  isDefault: SearchEngineRouter.isGoogleSearch(),
+  views: [
+    {
+      text: "通用",
+      type: "container",
+      views: [
+        UISwitch("移除右侧栏", "google-search-removeRightPanel", true),
+        UISwitch("移除用户还搜索了", "google-search-removeRelatedSearch", true),
+        UISwitch("移除相关问题", "google-search-removeQuestions", true),
+      ],
+    },
+    {
+      text: "显示模式优化",
+      type: "container",
+      views: [
+        UISwitch("开启", "google-search-showOptimization-enable", true),
+        UISelect<SearchResultShowType | "">("模式", "google-search-showOptimization-mode", "", [
+          {
+            text: "无",
+            value: "",
+          },
+          {
+            text: "单列居中",
+            value: "single-center",
+          },
+          {
+            text: "双列居中",
+            value: "double-column-center",
+          },
+          {
+            text: "三列居中",
+            value: "three-column-center",
+          },
+          {
+            text: "四列居中",
+            value: "four-column-center",
+          },
+        ]),
+      ],
+    },
+    // {
+    //   type: "container",
+    //   text: "搜索结果优化",
+    //   views: [
+    //     UISwitch("开启", "google-search-optimizationResult-enable", true),
+    //     UISwitch("移除广告", "google-search-optimizationResult-removeAds", true),
+    //     UISwitch("链接重定向", "google-search-optimizationResult-redirect", true),
+    //   ],
+    // },
+  ],
+};
