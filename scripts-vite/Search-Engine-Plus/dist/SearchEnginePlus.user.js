@@ -2619,7 +2619,7 @@
     searchResultShowOptimization(config) {
       log.info(`搜索结果优化`, config);
       const lockFn = new utils$1.LockFunction(() => {
-        const $results = $$("#content_left > div:not([data-direct-link])");
+        const $results = $$("#content_left > div:not([data-hijack])");
         for (const $result of $results) {
           if (config.removeAds && domUtils.selector('.se_st_footer:contains("广告")', $result)) {
             $result.remove();
@@ -2634,7 +2634,7 @@
           if ($title) {
             if (config.redirect) {
               $title.href = realLink;
-              $result.setAttribute("data-direct-link", "true");
+              $result.setAttribute("data-hijack", "true");
             }
           }
         }
@@ -2854,7 +2854,50 @@
       return result;
     },
   };
-  var GoogleSearchResult = { init() {} };
+  var GoogleSearchResult = {
+    init() {
+      Panel.execMenuOnce(
+        ["google-search-optimizationResult-enable", "google-search-optimizationResult-openBlank"],
+        (config) => {
+          const [enable, openBlank] = config.value;
+          if (!enable) return;
+          if (!openBlank) return;
+          return this.searchResultShowOptimization({ openBlank });
+        }
+      );
+    },
+    searchResultShowOptimization(config) {
+      log.info(`搜索结果优化`, config);
+      const lockFn = new utils$1.LockFunction(() => {
+        const $results = [
+          ...$$("#rso:not(:has(>script)) > div:not(:empty) > div[data-rpos]:not(:empty):not([data-hijack])"),
+          ...$$(
+            "#rso:has(>script)>div:not(:empty)>div:not(:empty):has(>div):not(:has(.related-question-pair)):not([data-hijack])"
+          ),
+        ];
+        for (const $result of $results)
+          if (config.openBlank)
+            $result.querySelectorAll("a[href]:not([target='blank_'])").forEach(($link) => {
+              $link.setAttribute("target", "_blank");
+            });
+      });
+      const observer = utils$1.mutationObserver(document, {
+        config: {
+          subtree: true,
+          childList: true,
+        },
+        immediate: true,
+        callback: () => {
+          lockFn.run();
+        },
+      });
+      return [
+        () => {
+          observer.disconnect();
+        },
+      ];
+    },
+  };
   var GoogleSearch = {
     init() {
       Panel.execMenuOnce("google-search-removeRightPanel", () => {
@@ -3456,6 +3499,14 @@
               value: "four-column-center",
             },
           ]),
+        ],
+      },
+      {
+        type: "container",
+        text: "搜索结果优化",
+        views: [
+          UISwitch("开启", "google-search-optimizationResult-enable", true),
+          UISwitch("新标签页打开", "google-search-optimizationResult-openBlank", false),
         ],
       },
     ],

@@ -25,7 +25,7 @@ export const BaiduSearchResult = {
     log.info(`搜索结果优化`, config);
     const resultSelector = "#content_left > div";
     const lockFn = new utils.LockFunction(() => {
-      const $results = $$(resultSelector + ":not([data-direct-link])");
+      const $results = $$(resultSelector + ":not([data-hijack])");
       for (const $result of $results) {
         if (config.removeAds && DOMUtils.selector('.se_st_footer:contains("广告")', $result)) {
           // 移除广告
@@ -48,7 +48,7 @@ export const BaiduSearchResult = {
           if (config.redirect) {
             // 重定向
             $title.href = realLink;
-            $result.setAttribute("data-direct-link", "true");
+            $result.setAttribute("data-hijack", "true");
           }
         }
       }

@@ -45,14 +45,15 @@ export const Component_Google: PopsPanelContentConfig = {
         ]),
       ],
     },
-    // {
-    //   type: "container",
-    //   text: "搜索结果优化",
-    //   views: [
-    //     UISwitch("开启", "google-search-optimizationResult-enable", true),
-    //     UISwitch("移除广告", "google-search-optimizationResult-removeAds", true),
-    //     UISwitch("链接重定向", "google-search-optimizationResult-redirect", true),
-    //   ],
-    // },
+    {
+      type: "container",
+      text: "搜索结果优化",
+      views: [
+        UISwitch("开启", "google-search-optimizationResult-enable", true),
+        UISwitch("新标签页打开", "google-search-optimizationResult-openBlank", false),
+        // UISwitch("移除广告", "google-search-optimizationResult-removeAds", true),
+        // UISwitch("链接重定向", "google-search-optimizationResult-redirect", true),
+      ],
+    },
   ],
 };
