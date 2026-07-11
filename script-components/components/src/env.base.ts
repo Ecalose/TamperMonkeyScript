@@ -185,11 +185,24 @@ const OriginPrototype = {
  * 添加样式
  */
 const addStyle = domUtils.addStyle.bind(domUtils);
+/**
+ * 添加样式（到文档末尾）
+ */
+const addStyleWithEnd = (cssText:string)=>{
+  const $css =  addStyle(cssText)
+  document.documentElement.appendChild($css);
+  return $css;
+};
 
 /**
  * 添加屏蔽CSS
  */
 const addBlockCSS = CommonUtil.addBlockCSS.bind(CommonUtil);
+
+/**
+ * 添加屏蔽CSS（到文档末尾）
+ */
+const addBlockCSSWithEnd = CommonUtil.addBlockCSSWithEnd.bind(CommonUtil);
 
 /**
  * 元素选择器
@@ -279,6 +292,7 @@ export {
   $,
   $$,
   addStyle,
+  addStyleWithEnd,
   AnyTouch,
   cookieManager,
   documentCookieManager,
@@ -295,4 +309,5 @@ export {
   VUE_ROOT_ID,
   getPageMaxZIndex,
   addBlockCSS,
+  addBlockCSSWithEnd,
 };
