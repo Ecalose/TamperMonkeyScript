@@ -75,6 +75,20 @@ const CommonUtil = {
     }
   },
   /**
+   * 添加屏蔽CSS到文档末尾
+   * @param args
+   * @example
+   * addBlockCSS("")
+   * addBlockCSS("","")
+   * addBlockCSS(["",""])
+   */
+  addBlockCSSWithEnd(...args: (string | string[])[]){
+    const $css = CommonUtil.addBlockCSS(...args);
+    if($css){
+      document.documentElement.appendChild($css);
+    }
+  },
+  /**
    * 设置GM_getResourceText的style内容
    * @param resourceMapData 资源数据
    * @example
