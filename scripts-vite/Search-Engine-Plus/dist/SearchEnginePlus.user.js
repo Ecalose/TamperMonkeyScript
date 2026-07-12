@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SearchEnginePlus
 // @namespace    https://github.com/WhiteSevs/TamperMonkeyScript
-// @version      2026.7.11
+// @version      2026.7.12
 // @author       WhiteSevs
 // @description  搜索引擎优化，包含以下搜索引擎：百度搜索、谷歌
 // @license      GPL-3.0-only
@@ -13,7 +13,7 @@
 // @match        *://m.baidu.com/*
 // @match        *://*.google.com/search*
 // @match        *://*.google.com.hk/search*
-// @require      https://fastly.jsdelivr.net/gh/WhiteSevs/TamperMonkeyScript@86be74b83fca4fa47521cded28377b35e1d7d2ac/lib/CoverUMD/index.js
+// @require
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/utils@2.12.2/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/domutils@2.0.8/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/pops@4.2.8/dist/index.umd.js
@@ -2695,7 +2695,7 @@
       log.info(`搜索结果显示优化: ` + mode);
       const result = [
         addStyleWithEnd(`
-      /* AI回答结果变成滚动条形式 */
+        /* AI回答结果变成滚动条形式 */
         #container #content_left .cosc-card-content [class^="fold-content_"]{
           min-height: unset !important;
           overflow: auto !important;
@@ -2706,6 +2706,39 @@
         }
       `),
       ];
+      const titleHoverCSS = `
+      #container #content_left > .c-container a.cosc-title-a,
+      #container #content_left > .c-container .c-title a[href],
+      #container #content_left > .c-container [class*="_sc-title"] a.sc-link {
+          & {
+              position: relative;
+          }
+
+          &,
+          & span,
+          & p.sc-paragraph{
+              text-decoration: none !important;
+          }
+
+          &:hover:after {
+              left: 0;
+              width: 100%;
+              transition: width 350ms;
+          }
+
+          &:after {
+              content: "";
+              position: absolute;
+              border-bottom: 2px solid #3476d2;
+              bottom: 0px;
+              left: 100%;
+              width: 0;
+              transition: width 350ms, left 350ms;
+              left: 0;
+          }
+      }
+
+    `;
       const centerCSS = `
       #container{
           margin: 0px auto !important;
@@ -2788,6 +2821,18 @@
           margin: 0px -20px;
           padding: 5px 20px;
       }
+      /* 标题高度适配 */
+      #content_left > .c-container [class*="title-wrapper"] {
+        &{
+          margin-bottom: 8px;
+        }
+        & [class*="title-box"],
+        & [class*="title-box"] h3.cosc-title{
+          margin-bottom: 0px;
+          padding-bottom: 0px;
+        }
+      }
+
       /* 标题移除省略号 */
       #content_left > .c-container .c-title a,
       #content_left > .c-container a.cosc-title-a{
@@ -2816,7 +2861,7 @@
         position: relative;
       }
     `;
-      result.push(addStyleWithEnd(resultCSS));
+      result.push(addStyleWithEnd(resultCSS), addStyleWithEnd(titleHoverCSS));
       if (mode === "single-center")
         result.push(
           addStyleWithEnd(centerCSS),
@@ -2932,7 +2977,7 @@
     searchResultShowOptimization(mode) {
       log.info(`搜索结果显示优化: ` + mode);
       const result = [addBlockCSS(".kp-wholepage-osrp")];
-      const linkHoverCSS = `
+      const titleHoverCSS = `
         #rso a,
         #rso a h3 {
             text-decoration: none !important;
@@ -3000,7 +3045,7 @@
     }
     `;
       const resultCSS = `
-    /* 搜索结果的样式和标题的悬浮样式 */
+        /* 搜索结果的样式和标题的悬浮样式 */
         #rso:not(:has(>script)) > div:not(:empty) > div[data-rpos]:not(:empty),
         #rso:has(>script)>div:not(:empty)>div:not(:empty):has(>div):not(:has(.related-question-pair)){
             width: 100% !important;
@@ -3042,7 +3087,7 @@
           height: -webkit-fill-available;
       }
     `;
-      result.push(addStyle(centerCSS), addStyle(resultCSS), addStyle(linkHoverCSS));
+      result.push(addStyle(centerCSS), addStyle(resultCSS), addStyle(titleHoverCSS));
       if (mode === "single-center")
         result.push(
           addStyle(`
@@ -3423,7 +3468,7 @@
         type: "container",
         views: [
           UISwitch("开启", "baidu-search-showOptimization-enable", true),
-          UISelect("模式", "baidu-search-showOptimization-mode", "", [
+          UISelect("模式", "baidu-search-showOptimization-mode", "single-center", [
             {
               text: "无",
               value: "",
@@ -3477,7 +3522,7 @@
         type: "container",
         views: [
           UISwitch("开启", "google-search-showOptimization-enable", true),
-          UISelect("模式", "google-search-showOptimization-mode", "", [
+          UISelect("模式", "google-search-showOptimization-mode", "single-center", [
             {
               text: "无",
               value: "",

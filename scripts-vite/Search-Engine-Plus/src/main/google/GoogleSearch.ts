@@ -51,7 +51,7 @@ export const GoogleSearch = {
 
     const result: any[] = [addBlockCSS(".kp-wholepage-osrp")];
 
-    const linkHoverCSS = /*css*/ `
+    const titleHoverCSS = /*css*/ `
         #rso a,
         #rso a h3 {
             text-decoration: none !important;
@@ -120,7 +120,7 @@ export const GoogleSearch = {
     }
     `;
     const resultCSS = /*css*/ `
-    /* 搜索结果的样式和标题的悬浮样式 */
+        /* 搜索结果的样式和标题的悬浮样式 */
         #rso:not(:has(>script)) > div:not(:empty) > div[data-rpos]:not(:empty),
         #rso:has(>script)>div:not(:empty)>div:not(:empty):has(>div):not(:has(.related-question-pair)){
             width: 100% !important;
@@ -162,7 +162,7 @@ export const GoogleSearch = {
           height: -webkit-fill-available;
       }
     `;
-    result.push(addStyle(centerCSS), addStyle(resultCSS), addStyle(linkHoverCSS));
+    result.push(addStyle(centerCSS), addStyle(resultCSS), addStyle(titleHoverCSS));
 
     if (mode === "single-center") {
       // 单列居中

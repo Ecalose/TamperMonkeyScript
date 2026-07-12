@@ -21,7 +21,7 @@ export const Component_Google: PopsPanelContentConfig = {
       type: "container",
       views: [
         UISwitch("开启", "google-search-showOptimization-enable", true),
-        UISelect<SearchResultShowType | "">("模式", "google-search-showOptimization-mode", "", [
+        UISelect<SearchResultShowType | "">("模式", "google-search-showOptimization-mode", "single-center", [
           {
             text: "无",
             value: "",

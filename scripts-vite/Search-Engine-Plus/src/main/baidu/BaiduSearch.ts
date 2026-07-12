@@ -51,7 +51,7 @@ export const BaiduSearch = {
 
     const result: any[] = [
       addStyleWithEnd(/*css*/ `
-      /* AI回答结果变成滚动条形式 */
+        /* AI回答结果变成滚动条形式 */
         #container #content_left .cosc-card-content [class^="fold-content_"]{
           min-height: unset !important;
           overflow: auto !important;
@@ -62,6 +62,40 @@ export const BaiduSearch = {
         }
       `),
     ];
+
+    const titleHoverCSS = /*css*/ `
+      #container #content_left > .c-container a.cosc-title-a,
+      #container #content_left > .c-container .c-title a[href],
+      #container #content_left > .c-container [class*="_sc-title"] a.sc-link {
+          & {
+              position: relative;
+          }
+
+          &,
+          & span,
+          & p.sc-paragraph{
+              text-decoration: none !important;
+          }
+
+          &:hover:after {
+              left: 0;
+              width: 100%;
+              transition: width 350ms;
+          }
+
+          &:after {
+              content: "";
+              position: absolute;
+              border-bottom: 2px solid #3476d2;
+              bottom: 0px;
+              left: 100%;
+              width: 0;
+              transition: width 350ms, left 350ms;
+              left: 0;
+          }
+      }
+
+    `;
 
     const centerCSS = /*css*/ `
       #container{
@@ -145,6 +179,18 @@ export const BaiduSearch = {
           margin: 0px -20px;
           padding: 5px 20px;
       }
+      /* 标题高度适配 */
+      #content_left > .c-container [class*="title-wrapper"] {
+        &{
+          margin-bottom: 8px;
+        }
+        & [class*="title-box"],
+        & [class*="title-box"] h3.cosc-title{
+          margin-bottom: 0px;
+          padding-bottom: 0px;
+        }
+      }
+
       /* 标题移除省略号 */
       #content_left > .c-container .c-title a,
       #content_left > .c-container a.cosc-title-a{
@@ -173,7 +219,7 @@ export const BaiduSearch = {
         position: relative;
       }
     `;
-    result.push(addStyleWithEnd(resultCSS));
+    result.push(addStyleWithEnd(resultCSS), addStyleWithEnd(titleHoverCSS));
     if (mode === "single-center") {
       // 单列居中
       result.push(

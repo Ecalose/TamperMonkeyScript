@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SearchEnginePlus
 // @namespace    https://github.com/WhiteSevs/TamperMonkeyScript
-// @version      2026.7.11
+// @version      2026.7.12
 // @author       WhiteSevs
 // @description  搜索引擎优化，包含以下搜索引擎：百度搜索、谷歌
 // @license      GPL-3.0-only
@@ -181,7 +181,7 @@
     				}
     			}
     		`}))},transformKey(e){if(Array.isArray(e))if(e.length>1){let t=e.sort();return JSON.stringify(t)}else return e[0];else return e},getDynamicValue(e,t){let n=!1,r=t,i=this.addValueChangeListener(e,(e,t)=>{r=t});return{get value(){return n||(n=!0,r=I.getValue(e,t)),r},destory(){I.removeValueChangeListener(i)}}}},L={qmsg_config_position:{key:`qmsg-config-position`,defaultValue:`bottom`},qmsg_config_maxnums:{key:`qmsg-config-maxnums`,defaultValue:3},qmsg_config_showreverse:{key:`qmsg-config-showreverse`,defaultValue:!1},httpx_cookie_manager_enable:{key:`httpx-use-cookie-enable`,defaultValue:!1},httpx_cookie_manager_use_document_cookie:{key:`httpx-use-document-cookie`,defaultValue:!1}},R=n.default.noConflict(),z=e.default.noConflict(),B=t.default,V=new R.Log(g,b.console||x.console),H=g?.script?.name||void 0,se=t.default.fn.Utils.AnyTouch();V.config({debug:!1,logMaxCount:250,autoClearConsole:!0,tag:!0});var U=()=>{let e=t.default.fn.InstanceUtils.getPopsMaxZIndex()?.zIndex??0,n=R.getMaxZIndexNodeInfoFromPoint()[0]?.zIndex??0;return Math.max(100,e,n)};r.default.config({isHTML:!0,autoClose:!0,showClose:!1,consoleLogContent(e){let t=e.setting.type;if(t===`loading`)return!1;let n=e.setting.content;return t===`warning`?V.warn(n):t===`error`?V.error(n):V.info(n),!1},get position(){return I.getValue(L.qmsg_config_position.key,L.qmsg_config_position.defaultValue)},get maxNums(){return I.getValue(L.qmsg_config_maxnums.key,L.qmsg_config_maxnums.defaultValue)},get showReverse(){return I.getValue(L.qmsg_config_showreverse.key,L.qmsg_config_showreverse.defaultValue)},get zIndex(){return U()}}),B.GlobalConfig.setGlobalConfig({zIndex:()=>U(),mask:{enable:!0,clickEvent:{toClose:!1,toHide:!1}},drag:!0});var ce=new R.GM_Menu({GM_getValue:h,GM_setValue:v,GM_registerMenuCommand:ee,GM_unregisterMenuCommand:ne}),W=new R.Httpx({xmlHttpRequest:re,logDetails:!1});W.interceptors.request.use(e=>e),W.interceptors.response.use(e=>e,e=>(V.error(`[Httpx-HttpxRequest.response] 响应错误`,{data:e}),e.type===`onabort`?r.default.warning(`请求取消`,{consoleLogContent:!0}):e.type===`onerror`?r.default.error(`请求异常`,{consoleLogContent:!0}):e.type===`ontimeout`?r.default.error(`请求超时`,{consoleLogContent:!0}):r.default.error(`其它错误`,{consoleLogContent:!0}),e)),b.Object.defineProperty,b.Object.keys,b.Object.values,b.Function.prototype.apply,b.Function.prototype.call,b.Element.prototype.appendChild,b.setTimeout.bind(b),b.clearTimeout.bind(b),b.setInterval.bind(b),b.clearInterval.bind(b);var G=z.addStyle.bind(z),K=e=>{let t=G(e);return document.documentElement.appendChild(t),t},q=T.addBlockCSS.bind(T),J=T.addBlockCSSWithEnd.bind(T);e.default.selector.bind(e.default);var Y=e.default.selectorAll.bind(e.default),X=new R.CookieManagerService({baseCookieHandler:`GM_cookie`});X.isSupportGM_cookie||(X.isSupportCookieStore?X.setOptions({baseCookieHandler:`cookieStore`}):X.setOptions({baseCookieHandler:`document.cookie`})),new R.DocumentCookieHandler;var le={init(){I.execMenuOnce([`baidu-search-optimizationResult-enable`,`baidu-search-optimizationResult-removeAds`,`baidu-search-optimizationResult-redirect`],e=>{let[t,n,r]=e.value;if(t&&!(!n&&!r))return this.searchResultShowOptimization({removeAds:n,redirect:r})})},searchResultShowOptimization(e){V.info(`搜索结果优化`,e);let t=new R.LockFunction(()=>{let t=Y(`#content_left > div:not([data-hijack])`);for(let n of t){if(e.removeAds&&z.selector(`.se_st_footer:contains("广告")`,n)){n.remove();continue}let t=n.getAttribute(`mu`);if(!t)continue;let r=n.querySelector(`a.sc-link[href]`)||n.querySelector(`.c-title a[href]`)||n.querySelector(`a.cosc-title-a[href]`);r&&e.redirect&&(r.href=t,n.setAttribute(`data-hijack`,`true`))}}),n=R.mutationObserver(document,{config:{subtree:!0,childList:!0,attributes:!0},immediate:!0,callback:()=>{t.run()}});return[()=>{n.disconnect()},e.removeAds?J(`#content_left > div:has(.ec-tuiguang)`,`#content_left > div:has(.c-recomm-wrap)`):null]}},ue={init(){I.execMenuOnce(`baidu-search-removeRightPanel`,()=>this.removeRightPanel()),I.execMenuOnce(`baidu-search-removeEveryOneSearch`,()=>this.removeEveryOneSearch()),I.execMenuOnce(`baidu-search-removeRelatedSearch`,()=>this.removeRelatedSearch()),I.execMenuOnce([`baidu-search-showOptimization-enable`,`baidu-search-showOptimization-mode`],e=>{let[t,n]=e.value;if(t&&!R.isNull(n))return this.searchResultShowOptimization(n)}),le.init()},removeRightPanel(){return V.info(`移除右侧栏`),J(`#content_right`)},removeEveryOneSearch(){return V.info(`移除大家都在搜`),J(`.result-op[tpl="recommend_list"]`)},removeRelatedSearch(){return V.info(`移除相关搜索`),J(`.result-molecule:has(#rs_new)`)},searchResultShowOptimization(e){V.info(`搜索结果显示优化: `+e);let t=[K(`
-      /* AI回答结果变成滚动条形式 */
+        /* AI回答结果变成滚动条形式 */
         #container #content_left .cosc-card-content [class^="fold-content_"]{
           min-height: unset !important;
           overflow: auto !important;
@@ -289,6 +289,18 @@
           margin: 0px -20px;
           padding: 5px 20px;
       }
+      /* 标题高度适配 */
+      #content_left > .c-container [class*="title-wrapper"] {
+        &{
+          margin-bottom: 8px;
+        }
+        & [class*="title-box"],
+        & [class*="title-box"] h3.cosc-title{
+          margin-bottom: 0px;
+          padding-bottom: 0px;
+        }
+      }
+
       /* 标题移除省略号 */
       #content_left > .c-container .c-title a,
       #content_left > .c-container a.cosc-title-a{
@@ -297,6 +309,38 @@
         overflow: hidden;
         width: 100%;
       }
+    `),K(`
+      #container #content_left > .c-container a.cosc-title-a,
+      #container #content_left > .c-container .c-title a[href],
+      #container #content_left > .c-container [class*="_sc-title"] a.sc-link {
+          & {
+              position: relative;
+          }
+
+          &,
+          & span,
+          & p.sc-paragraph{
+              text-decoration: none !important;
+          }
+
+          &:hover:after {
+              left: 0;
+              width: 100%;
+              transition: width 350ms;
+          }
+
+          &:after {
+              content: "";
+              position: absolute;
+              border-bottom: 2px solid #3476d2;
+              bottom: 0px;
+              left: 100%;
+              width: 0;
+              transition: width 350ms, left 350ms;
+              left: 0;
+          }
+      }
+
     `)),e===`single-center`?t.push(K(n),K(`
         #container #content_left > .c-container {
             width: 55%;
@@ -375,7 +419,7 @@
         justify-self: center;
     }
     `),G(`
-    /* 搜索结果的样式和标题的悬浮样式 */
+        /* 搜索结果的样式和标题的悬浮样式 */
         #rso:not(:has(>script)) > div:not(:empty) > div[data-rpos]:not(:empty),
         #rso:has(>script)>div:not(:empty)>div:not(:empty):has(>div):not(:has(.related-question-pair)){
             width: 100% !important;
@@ -443,4 +487,4 @@
                   <path d="M881.320472 766.079314H689.251876a43.901393 43.901393 0 0 1 0-87.802787h192.068596a21.950697 21.950697 0 0 0 21.950696-21.950696v-65.85209a43.901393 43.901393 0 0 1 87.802787 0v65.85209a109.753483 109.753483 0 0 1-109.753483 109.753483zM305.114684 502.670954H175.605573a43.901393 43.901393 0 0 1 0-87.802787h129.509111a43.901393 43.901393 0 0 1 0 87.802787zM563.03537 365.4791a43.901393 43.901393 0 0 1-43.901394-43.901394v-105.363344A109.753483 109.753483 0 0 1 628.88746 106.460879h61.461951a21.950697 21.950697 0 0 0 21.950696-21.950697V43.901393a43.901393 43.901393 0 0 1 87.802787 0v40.608789a109.753483 109.753483 0 0 1-109.753483 109.753484h-61.461951a21.950697 21.950697 0 0 0-21.950697 21.950696v105.363344a43.901393 43.901393 0 0 1-43.901393 43.901394z"></path>
                 </svg>
               </i>
-            `},{style:`margin-right: 5px;display: inline-flex;`}),r=n.querySelector(`.pops-bottom-icon`);z.on(r,`click`,function(e){l.handler.shortCut.deleteOption(a),i.toolTip.offEvent(),i.toolTip.close(),i.toolTip.destory(),n.remove()},{once:!0});let i=B.tooltip({$target:r,content:()=>t,className:`github-tooltip`,isFixed:!0,only:!0});z.empty(c),z.append(c,n,e)};if(B.rightClickMenu({$target:c,only:!0,data:[{text:()=>l.handler.shortCut.hasOption(a)?`修改快捷键`:`添加快捷键`,icon:B.config.iconSVG.keyboard,callback(e,t,n,o){if(i.isWaitKeyboardPress()){r.default.warning(`请先执行当前的录入操作`);return}let s=r.default.loading(`请按下快捷键...`,{showClose:!0,onClose(){i.cancelEnterShortcutKeys()}});i.enterShortcutKeys(a).then(({status:e,option:t,key:n})=>{s.close(),e?(V.success(`录入快捷键`,t),r.default.success(`录入成功`),u()):r.default.error(`快捷键 ${i.translateKeyboardValueToButtonText(t)} 已被 ${n} 占用`)})}}]}),!i.hasOption(a))return;u()}}};return Reflect.set(u.attributes,D,t),Reflect.set(u.attributes,O,n),Q.initComponentsStorageApi(`switch`,u,{get(e,t){return I.getValue(e,t)},set(e,t){I.setValue(e,t)}}),u},Q={$data:{__storeApiFn:null,get storeApiValue(){return this.__storeApiFn||=new n.default.Dictionary,this.__storeApiFn}},getStorageApi(e){if(this.hasStorageApi(e))return this.$data.storeApiValue.get(e)},hasStorageApi(e){return this.$data.storeApiValue.has(e)},setStorageApi(e,t){this.$data.storeApiValue.set(e,t)},initComponentsStorageApi(e,t,n){let r;r=this.hasStorageApi(e)?this.getStorageApi(e):n,this.setComponentsStorageApiProperty(t,r)},setComponentsStorageApiProperty(e,t){Reflect.set(e.props,A,t)}},$=function(e,t,n,r,i,a,o){let s={text:e,type:`select`,description:a,attributes:{},props:{},getValue(){return this.props[A].get(t,n)},callback(e){if(e==null)return;let n=e.value;V.info(`选择：${e.text}`),!(typeof i==`function`&&i(e))&&(this.props[A].set(t,n),typeof o==`function`&&o(e))},data:r};return Reflect.set(s.attributes,D,t),Reflect.set(s.attributes,O,n),Q.initComponentsStorageApi(`select`,s,{get(e,t){return I.getValue(e,t)},set(e,t){I.setValue(e,t)}}),s},me={id:`view-general`,title:`通用`,views:[{text:`Toast配置`,type:`container`,views:[$(`Toast位置`,L.qmsg_config_position.key,L.qmsg_config_position.defaultValue,[{value:`topleft`,text:`左上角`},{value:`top`,text:`顶部`},{value:`topright`,text:`右上角`},{value:`left`,text:`左边`},{value:`center`,text:`中间`},{value:`right`,text:`右边`},{value:`bottomleft`,text:`左下角`},{value:`bottom`,text:`底部`},{value:`bottomright`,text:`右下角`}],e=>{V.info(`设置当前Qmsg弹出位置`+e.text)},`Toast显示在页面九宫格的位置`),$(`最多显示的数量`,L.qmsg_config_maxnums.key,L.qmsg_config_maxnums.defaultValue,[{value:1,text:`1`},{value:2,text:`2`},{value:3,text:`3`},{value:4,text:`4`},{value:5,text:`5`}],void 0,`限制Toast显示的数量`),Z(`逆序弹出`,L.qmsg_config_showreverse.key,L.qmsg_config_showreverse.defaultValue,void 0,`修改Toast弹出的顺序`)]},{text:`Cookie配置`,type:`container`,views:[Z(`启用`,L.httpx_cookie_manager_enable.key,L.httpx_cookie_manager_enable.defaultValue,void 0,`Api请求时会自动使用下面的Cookie设置`),Z(`使用document.cookie`,L.httpx_cookie_manager_use_document_cookie.key,L.httpx_cookie_manager_use_document_cookie.defaultValue,void 0,`会自动根据请求的域名来使用cookie`)]}]},he={id:`baidu`,title:`百度搜索`,isDefault:w.isBaiduSearch(),views:[{text:`通用`,type:`container`,views:[Z(`移除右侧栏`,`baidu-search-removeRightPanel`,!0),Z(`移除大家都在搜`,`baidu-search-removeEveryOneSearch`,!0),Z(`移除相关搜索`,`baidu-search-removeRelatedSearch`,!0)]},{text:`显示模式优化`,type:`container`,views:[Z(`开启`,`baidu-search-showOptimization-enable`,!0),$(`模式`,`baidu-search-showOptimization-mode`,``,[{text:`无`,value:``},{text:`单列居中`,value:`single-center`},{text:`双列居中`,value:`double-column-center`},{text:`三列居中`,value:`three-column-center`},{text:`四列居中`,value:`four-column-center`}])]},{type:`container`,text:`搜索结果优化`,views:[Z(`开启`,`baidu-search-optimizationResult-enable`,!0),Z(`移除广告`,`baidu-search-optimizationResult-removeAds`,!0),Z(`链接重定向`,`baidu-search-optimizationResult-redirect`,!0)]}]},ge={id:`google`,title:`Google搜索`,isDefault:w.isGoogleSearch(),views:[{text:`通用`,type:`container`,views:[Z(`移除右侧栏`,`google-search-removeRightPanel`,!0),Z(`移除用户还搜索了`,`google-search-removeRelatedSearch`,!0),Z(`移除相关问题`,`google-search-removeQuestions`,!0)]},{text:`显示模式优化`,type:`container`,views:[Z(`开启`,`google-search-showOptimization-enable`,!0),$(`模式`,`google-search-showOptimization-mode`,``,[{text:`无`,value:``},{text:`单列居中`,value:`single-center`},{text:`双列居中`,value:`double-column-center`},{text:`三列居中`,value:`three-column-center`},{text:`四列居中`,value:`four-column-center`}])]},{type:`container`,text:`搜索结果优化`,views:[Z(`开启`,`google-search-optimizationResult-enable`,!0),Z(`新标签页打开`,`google-search-optimizationResult-openBlank`,!1)]}]};N.addContentConfig([me,he,ge]),I.init(),pe.init()})(DOMUtils,pops,Utils,Qmsg);
+            `},{style:`margin-right: 5px;display: inline-flex;`}),r=n.querySelector(`.pops-bottom-icon`);z.on(r,`click`,function(e){l.handler.shortCut.deleteOption(a),i.toolTip.offEvent(),i.toolTip.close(),i.toolTip.destory(),n.remove()},{once:!0});let i=B.tooltip({$target:r,content:()=>t,className:`github-tooltip`,isFixed:!0,only:!0});z.empty(c),z.append(c,n,e)};if(B.rightClickMenu({$target:c,only:!0,data:[{text:()=>l.handler.shortCut.hasOption(a)?`修改快捷键`:`添加快捷键`,icon:B.config.iconSVG.keyboard,callback(e,t,n,o){if(i.isWaitKeyboardPress()){r.default.warning(`请先执行当前的录入操作`);return}let s=r.default.loading(`请按下快捷键...`,{showClose:!0,onClose(){i.cancelEnterShortcutKeys()}});i.enterShortcutKeys(a).then(({status:e,option:t,key:n})=>{s.close(),e?(V.success(`录入快捷键`,t),r.default.success(`录入成功`),u()):r.default.error(`快捷键 ${i.translateKeyboardValueToButtonText(t)} 已被 ${n} 占用`)})}}]}),!i.hasOption(a))return;u()}}};return Reflect.set(u.attributes,D,t),Reflect.set(u.attributes,O,n),Q.initComponentsStorageApi(`switch`,u,{get(e,t){return I.getValue(e,t)},set(e,t){I.setValue(e,t)}}),u},Q={$data:{__storeApiFn:null,get storeApiValue(){return this.__storeApiFn||=new n.default.Dictionary,this.__storeApiFn}},getStorageApi(e){if(this.hasStorageApi(e))return this.$data.storeApiValue.get(e)},hasStorageApi(e){return this.$data.storeApiValue.has(e)},setStorageApi(e,t){this.$data.storeApiValue.set(e,t)},initComponentsStorageApi(e,t,n){let r;r=this.hasStorageApi(e)?this.getStorageApi(e):n,this.setComponentsStorageApiProperty(t,r)},setComponentsStorageApiProperty(e,t){Reflect.set(e.props,A,t)}},$=function(e,t,n,r,i,a,o){let s={text:e,type:`select`,description:a,attributes:{},props:{},getValue(){return this.props[A].get(t,n)},callback(e){if(e==null)return;let n=e.value;V.info(`选择：${e.text}`),!(typeof i==`function`&&i(e))&&(this.props[A].set(t,n),typeof o==`function`&&o(e))},data:r};return Reflect.set(s.attributes,D,t),Reflect.set(s.attributes,O,n),Q.initComponentsStorageApi(`select`,s,{get(e,t){return I.getValue(e,t)},set(e,t){I.setValue(e,t)}}),s},me={id:`view-general`,title:`通用`,views:[{text:`Toast配置`,type:`container`,views:[$(`Toast位置`,L.qmsg_config_position.key,L.qmsg_config_position.defaultValue,[{value:`topleft`,text:`左上角`},{value:`top`,text:`顶部`},{value:`topright`,text:`右上角`},{value:`left`,text:`左边`},{value:`center`,text:`中间`},{value:`right`,text:`右边`},{value:`bottomleft`,text:`左下角`},{value:`bottom`,text:`底部`},{value:`bottomright`,text:`右下角`}],e=>{V.info(`设置当前Qmsg弹出位置`+e.text)},`Toast显示在页面九宫格的位置`),$(`最多显示的数量`,L.qmsg_config_maxnums.key,L.qmsg_config_maxnums.defaultValue,[{value:1,text:`1`},{value:2,text:`2`},{value:3,text:`3`},{value:4,text:`4`},{value:5,text:`5`}],void 0,`限制Toast显示的数量`),Z(`逆序弹出`,L.qmsg_config_showreverse.key,L.qmsg_config_showreverse.defaultValue,void 0,`修改Toast弹出的顺序`)]},{text:`Cookie配置`,type:`container`,views:[Z(`启用`,L.httpx_cookie_manager_enable.key,L.httpx_cookie_manager_enable.defaultValue,void 0,`Api请求时会自动使用下面的Cookie设置`),Z(`使用document.cookie`,L.httpx_cookie_manager_use_document_cookie.key,L.httpx_cookie_manager_use_document_cookie.defaultValue,void 0,`会自动根据请求的域名来使用cookie`)]}]},he={id:`baidu`,title:`百度搜索`,isDefault:w.isBaiduSearch(),views:[{text:`通用`,type:`container`,views:[Z(`移除右侧栏`,`baidu-search-removeRightPanel`,!0),Z(`移除大家都在搜`,`baidu-search-removeEveryOneSearch`,!0),Z(`移除相关搜索`,`baidu-search-removeRelatedSearch`,!0)]},{text:`显示模式优化`,type:`container`,views:[Z(`开启`,`baidu-search-showOptimization-enable`,!0),$(`模式`,`baidu-search-showOptimization-mode`,`single-center`,[{text:`无`,value:``},{text:`单列居中`,value:`single-center`},{text:`双列居中`,value:`double-column-center`},{text:`三列居中`,value:`three-column-center`},{text:`四列居中`,value:`four-column-center`}])]},{type:`container`,text:`搜索结果优化`,views:[Z(`开启`,`baidu-search-optimizationResult-enable`,!0),Z(`移除广告`,`baidu-search-optimizationResult-removeAds`,!0),Z(`链接重定向`,`baidu-search-optimizationResult-redirect`,!0)]}]},ge={id:`google`,title:`Google搜索`,isDefault:w.isGoogleSearch(),views:[{text:`通用`,type:`container`,views:[Z(`移除右侧栏`,`google-search-removeRightPanel`,!0),Z(`移除用户还搜索了`,`google-search-removeRelatedSearch`,!0),Z(`移除相关问题`,`google-search-removeQuestions`,!0)]},{text:`显示模式优化`,type:`container`,views:[Z(`开启`,`google-search-showOptimization-enable`,!0),$(`模式`,`google-search-showOptimization-mode`,`single-center`,[{text:`无`,value:``},{text:`单列居中`,value:`single-center`},{text:`双列居中`,value:`double-column-center`},{text:`三列居中`,value:`three-column-center`},{text:`四列居中`,value:`four-column-center`}])]},{type:`container`,text:`搜索结果优化`,views:[Z(`开启`,`google-search-optimizationResult-enable`,!0),Z(`新标签页打开`,`google-search-optimizationResult-openBlank`,!1)]}]};N.addContentConfig([me,he,ge]),I.init(),pe.init()})(DOMUtils,pops,Utils,Qmsg);

@@ -21,7 +21,7 @@ export const Component_Baidu: PopsPanelContentConfig = {
       type: "container",
       views: [
         UISwitch("开启", "baidu-search-showOptimization-enable", true),
-        UISelect<SearchResultShowType | "">("模式", "baidu-search-showOptimization-mode", "", [
+        UISelect<SearchResultShowType | "">("模式", "baidu-search-showOptimization-mode", "single-center", [
           {
             text: "无",
             value: "",
