@@ -49,9 +49,11 @@ export const Component_Baidu: PopsPanelContentConfig = {
       type: "container",
       text: "搜索结果优化",
       views: [
-        UISwitch("开启", "baidu-search-optimizationResult-enable", true),
+        UISwitch("启用", "baidu-search-optimizationResult-enable", true, void 0, "开启后下面的功能才会生效"),
         UISwitch("移除广告", "baidu-search-optimizationResult-removeAds", true),
         UISwitch("链接重定向", "baidu-search-optimizationResult-redirect", true),
+        UISwitch("添加favicon", "baidu-search-optimizationResult-addFavicon", true),
+        UISwitch("标识非安全的链接", "baidu-search-optimizationResult-markUnsafeLink", true),
       ],
     },
   ],

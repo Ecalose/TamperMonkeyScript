@@ -1,5 +1,5 @@
 import { $$, DOMUtils, log, utils } from "@/env";
-import { addBlockCSSWithEnd } from "@components/env.base";
+import { addBlockCSSWithEnd, addStyleWithEnd } from "@components/env.base";
 import { Panel } from "@components/setting/panel";
 
 export const BaiduSearchResult = {
@@ -9,19 +9,26 @@ export const BaiduSearchResult = {
         "baidu-search-optimizationResult-enable",
         "baidu-search-optimizationResult-removeAds",
         "baidu-search-optimizationResult-redirect",
+        "baidu-search-optimizationResult-addFavicon",
+        "baidu-search-optimizationResult-markUnsafeLink",
       ],
       (config) => {
-        const [enable, removeAds, redirect] = config.value;
+        const [enable, removeAds, redirect, addFavicon, markUnsafeLink] = config.value;
         if (!enable) return;
-        if (!removeAds && !redirect) return;
-        return this.searchResultShowOptimization({ removeAds, redirect });
+        if (!removeAds && !redirect && !addFavicon && !markUnsafeLink) return;
+        return this.searchResultShowOptimization({ removeAds, redirect, addFavicon, markUnsafeLink });
       }
     );
   },
   /**
    * 搜索结果优化
    */
-  searchResultShowOptimization(config: { removeAds: boolean; redirect: boolean }) {
+  searchResultShowOptimization(config: {
+    removeAds: boolean;
+    redirect: boolean;
+    addFavicon: boolean;
+    markUnsafeLink: boolean;
+  }) {
     log.info(`搜索结果优化`, config);
     const resultSelector = "#content_left > div";
     const lockFn = new utils.LockFunction(() => {
@@ -34,10 +41,11 @@ export const BaiduSearchResult = {
         }
         const mu = $result.getAttribute("mu");
         /** 真实链接 */
-        const realLink = mu;
+        let realLink = mu;
         if (!realLink) {
           continue;
         }
+        realLink = realLink.trim();
         /** 标题 */
         const $title =
           $result.querySelector<HTMLAnchorElement>("a.sc-link[href]") ||
@@ -49,6 +57,38 @@ export const BaiduSearchResult = {
             // 重定向
             $title.href = realLink;
             $result.setAttribute("data-hijack", "true");
+          }
+          if (config.addFavicon) {
+            // 在前面添加图标
+            const $ico = DOMUtils.createElement("img");
+            $ico.className = "website-ico";
+            try {
+              const realLinkInst = new URL(realLink);
+              $ico.src = `${realLinkInst.origin}/favicon.ico`;
+              DOMUtils.prepend($title, $ico);
+              DOMUtils.css($title, {
+                display: "flex",
+                "align-items": "center",
+              });
+              DOMUtils.on($ico, "error", () => {
+                $ico.remove();
+              });
+            } catch {}
+          }
+          if (config.markUnsafeLink) {
+            // 显示不安全的链接
+            if (realLink.trim().startsWith("http://")) {
+              DOMUtils.prepend(
+                $title,
+                /*html*/ `
+                <svg viewBox="0 0 1102 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" style="margin-right: 4px;"><path d="M1079.847385 767.133538l-389.513847-690.845538c-62.621538-101.651692-215.197538-101.769846-277.858461 0l-389.513846 690.806154c-64 103.896615 13.469538 235.441231 138.870154 235.441231H940.898462c125.282462 0 202.909538-131.426462 138.909538-235.401847zM551.384615 877.843692c-35.603692 0-64.590769-27.963077-64.590769-62.345846 0-34.343385 28.987077-62.306462 64.590769-62.306461 35.603692 0 64.590769 27.963077 64.59077 62.306461 0 34.382769-28.987077 62.345846-64.59077 62.345846z m64.59077-249.304615c0 34.343385-28.987077 62.306462-64.59077 62.306461-35.603692 0-64.590769-27.963077-64.590769-62.345846V316.849231c0-34.382769 28.987077-62.345846 64.590769-62.345846 35.603692 0 64.590769 27.963077 64.59077 62.345846v311.650461z" fill="#ED4662" p-id="6187"></path></svg>
+              `
+              );
+              DOMUtils.css($title, {
+                color: "#ecb3b3 !important",
+                "text-decoration": "line-through !important",
+              });
+            }
           }
         }
       }
@@ -66,6 +106,17 @@ export const BaiduSearchResult = {
     });
 
     return [
+      addStyleWithEnd(/*css*/ `
+          img.website-ico{
+            width: 1em;
+            height: 1em;
+            object-fit: contain;
+            margin-right: 4px;
+          }
+          #content_left a.sc-link:has(img.website-ico){
+            display: inline-flex !important;
+          }
+        `),
       () => {
         observer.disconnect();
       },

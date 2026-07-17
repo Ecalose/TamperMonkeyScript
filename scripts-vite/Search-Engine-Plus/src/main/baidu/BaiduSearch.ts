@@ -139,6 +139,7 @@ export const BaiduSearch = {
       #page [class^="page-inner"]{
         width: min-content !important;
         padding-left: 0px !important;
+        margin: 0 auto;
       }
       /* 底部 */
       #foot .foot-inner{
@@ -148,6 +149,11 @@ export const BaiduSearch = {
       #foot .foot-inner #help{
         margin: 0 !important;
       }
+      /* 搜索结果涉及价格仅作参考，请以商家官网为准 */
+      #content_left > div:first-child:not(:has(*)) {
+          text-align: center;
+      }
+
       `;
     const resultCSS = /*css*/ `
       #content_left > .c-container{

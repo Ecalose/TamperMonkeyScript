@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SearchEnginePlus
 // @namespace    https://github.com/WhiteSevs/TamperMonkeyScript
-// @version      2026.7.12
+// @version      2026.7.17
 // @author       WhiteSevs
 // @description  搜索引擎优化，包含以下搜索引擎：百度搜索、谷歌
 // @license      GPL-3.0-only
@@ -13,7 +13,7 @@
 // @match        *://m.baidu.com/*
 // @match        *://*.google.com/search*
 // @match        *://*.google.com.hk/search*
-// @require
+// @require      https://fastly.jsdelivr.net/gh/WhiteSevs/TamperMonkeyScript@86be74b83fca4fa47521cded28377b35e1d7d2ac/lib/CoverUMD/index.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/utils@2.12.2/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/domutils@2.0.8/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/pops@4.2.8/dist/index.umd.js
@@ -2604,14 +2604,18 @@
           "baidu-search-optimizationResult-enable",
           "baidu-search-optimizationResult-removeAds",
           "baidu-search-optimizationResult-redirect",
+          "baidu-search-optimizationResult-addFavicon",
+          "baidu-search-optimizationResult-markUnsafeLink",
         ],
         (config) => {
-          const [enable, removeAds, redirect] = config.value;
+          const [enable, removeAds, redirect, addFavicon, markUnsafeLink] = config.value;
           if (!enable) return;
-          if (!removeAds && !redirect) return;
+          if (!removeAds && !redirect && !addFavicon && !markUnsafeLink) return;
           return this.searchResultShowOptimization({
             removeAds,
             redirect,
+            addFavicon,
+            markUnsafeLink,
           });
         }
       );
@@ -2625,8 +2629,9 @@
             $result.remove();
             continue;
           }
-          const realLink = $result.getAttribute("mu");
+          let realLink = $result.getAttribute("mu");
           if (!realLink) continue;
+          realLink = realLink.trim();
           const $title =
             $result.querySelector("a.sc-link[href]") ||
             $result.querySelector(".c-title a[href]") ||
@@ -2635,6 +2640,35 @@
             if (config.redirect) {
               $title.href = realLink;
               $result.setAttribute("data-hijack", "true");
+            }
+            if (config.addFavicon) {
+              const $ico = domUtils.createElement("img");
+              $ico.className = "website-ico";
+              try {
+                $ico.src = `${new URL(realLink).origin}/favicon.ico`;
+                domUtils.prepend($title, $ico);
+                domUtils.css($title, {
+                  display: "flex",
+                  "align-items": "center",
+                });
+                domUtils.on($ico, "error", () => {
+                  $ico.remove();
+                });
+              } catch {}
+            }
+            if (config.markUnsafeLink) {
+              if (realLink.trim().startsWith("http://")) {
+                domUtils.prepend(
+                  $title,
+                  `
+                <svg viewBox="0 0 1102 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" style="margin-right: 4px;"><path d="M1079.847385 767.133538l-389.513847-690.845538c-62.621538-101.651692-215.197538-101.769846-277.858461 0l-389.513846 690.806154c-64 103.896615 13.469538 235.441231 138.870154 235.441231H940.898462c125.282462 0 202.909538-131.426462 138.909538-235.401847zM551.384615 877.843692c-35.603692 0-64.590769-27.963077-64.590769-62.345846 0-34.343385 28.987077-62.306462 64.590769-62.306461 35.603692 0 64.590769 27.963077 64.59077 62.306461 0 34.382769-28.987077 62.345846-64.59077 62.345846z m64.59077-249.304615c0 34.343385-28.987077 62.306462-64.59077 62.306461-35.603692 0-64.590769-27.963077-64.590769-62.345846V316.849231c0-34.382769 28.987077-62.345846 64.590769-62.345846 35.603692 0 64.590769 27.963077 64.59077 62.345846v311.650461z" fill="#ED4662" p-id="6187"></path></svg>
+              `
+                );
+                domUtils.css($title, {
+                  color: "#ecb3b3 !important",
+                  "text-decoration": "line-through !important",
+                });
+              }
             }
           }
         }
@@ -2651,6 +2685,17 @@
         },
       });
       return [
+        addStyleWithEnd(`
+          img.website-ico{
+            width: 1em;
+            height: 1em;
+            object-fit: contain;
+            margin-right: 4px;
+          }
+          #content_left a.sc-link:has(img.website-ico){
+            display: inline-flex !important;
+          }
+        `),
         () => {
           observer.disconnect();
         },
@@ -2781,6 +2826,7 @@
       #page [class^="page-inner"]{
         width: min-content !important;
         padding-left: 0px !important;
+        margin: 0 auto;
       }
       /* 底部 */
       #foot .foot-inner{
@@ -2790,6 +2836,11 @@
       #foot .foot-inner #help{
         margin: 0 !important;
       }
+      /* 搜索结果涉及价格仅作参考，请以商家官网为准 */
+      #content_left > div:first-child:not(:has(*)) {
+          text-align: center;
+      }
+
       `;
       const resultCSS = `
       #content_left > .c-container{
@@ -3496,9 +3547,11 @@
         type: "container",
         text: "搜索结果优化",
         views: [
-          UISwitch("开启", "baidu-search-optimizationResult-enable", true),
+          UISwitch("启用", "baidu-search-optimizationResult-enable", true, void 0, "开启后下面的功能才会生效"),
           UISwitch("移除广告", "baidu-search-optimizationResult-removeAds", true),
           UISwitch("链接重定向", "baidu-search-optimizationResult-redirect", true),
+          UISwitch("添加favicon", "baidu-search-optimizationResult-addFavicon", true),
+          UISwitch("标识非安全的链接", "baidu-search-optimizationResult-markUnsafeLink", true),
         ],
       },
     ],
@@ -3550,7 +3603,7 @@
         type: "container",
         text: "搜索结果优化",
         views: [
-          UISwitch("开启", "google-search-optimizationResult-enable", true),
+          UISwitch("启用", "google-search-optimizationResult-enable", true),
           UISwitch("新标签页打开", "google-search-optimizationResult-openBlank", false),
         ],
       },
