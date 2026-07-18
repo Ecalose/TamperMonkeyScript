@@ -211,9 +211,9 @@ export const PopsPanel = {
         globalThis,
         (evt) => {
           if (evt.key === "Escape" && !evt.ctrlKey && !evt.shiftKey && !evt.altKey && !evt.metaKey) {
-            // Esc
+            // only Esc
             const $exitBtn = $panelRightSectionWrapper.querySelector<HTMLLIElement>(
-              ".pops-panel-deepMenu-container-left-arrow-icon"
+              ".pops-panel-container:last-child .pops-panel-deepMenu-container-left-arrow-icon"
             );
             if ($exitBtn) {
               $exitBtn.click();

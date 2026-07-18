@@ -81,7 +81,7 @@
 }
 
 @keyframes pops-anim-wait-rotate {
-  form {
+  from {
     transform: rotate(0);
   }
   to {

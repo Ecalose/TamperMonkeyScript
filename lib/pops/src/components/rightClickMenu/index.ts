@@ -139,7 +139,10 @@ export const PopsRightClickMenu = {
        * @param event
        * @param selectorTarget
        */
-      async contextMenuEvent(event: PointerEvent, selectorTarget: NonNullable<PopsRightClickMenuConfig["$target"]>) {
+      async contextMenuEvent(
+        event: PointerEvent | TouchEvent,
+        selectorTarget: NonNullable<PopsRightClickMenuConfig["$target"]>
+      ) {
         if (config.preventDefault) {
           popsDOMUtils.preventEvent(event);
         }
@@ -177,8 +180,8 @@ export const PopsRightClickMenu = {
        * @param target 目标
        * @param selector 子元素选择器
        */
-      addContextMenuEvent(target: PopsRightClickMenuConfig["$target"], selector?: string) {
-        popsDOMUtils.on(target!, "contextmenu", selector, PopsContextMenu.contextMenuEvent);
+      addContextMenuEvent(target: NonNullable<PopsRightClickMenuConfig["$target"]>, selector?: string) {
+        popsDOMUtils.on(target, "contextmenu", selector, PopsContextMenu.contextMenuEvent);
       },
       /**
        * 移除contextmenu事件
@@ -390,7 +393,7 @@ export const PopsRightClickMenu = {
        * @param $listenerRootNode 右键菜单监听的元素
        */
       showMenu(
-        menuEvent: PointerEvent,
+        menuEvent: PointerEvent | TouchEvent,
         dataConfig: PopsRightClickMenuDataConfig[],
         $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>
       ) {
@@ -407,7 +410,19 @@ export const PopsRightClickMenu = {
           emitter.emit("pops:before-append-to-page", $shadowRoot, $shadowContainer);
           popsDOMUtils.appendBody($shadowContainer);
         }
-        this.handlerShowMenuCSS(menuElement, menuEvent);
+        let posInfo: {
+          clientX: number;
+          clientY: number;
+        };
+        if (menuEvent instanceof TouchEvent) {
+          posInfo = {
+            clientX: (<TouchEvent>menuEvent).touches?.[0].clientX || 0,
+            clientY: (<TouchEvent>menuEvent).touches?.[0].clientY || 0,
+          };
+        } else {
+          posInfo = menuEvent;
+        }
+        this.handlerShowMenuCSS(menuElement, posInfo);
         return menuElement;
       },
       /**
@@ -420,7 +435,7 @@ export const PopsRightClickMenu = {
        * @param $listenerRootNode 右键菜单监听的元素
        */
       showClildMenu(
-        menuEvent: PointerEvent,
+        menuEvent: PointerEvent | TouchEvent,
         posInfo: {
           clientX: number;
           clientY: number;
@@ -499,7 +514,7 @@ export const PopsRightClickMenu = {
        * @param $listenerRootNode 右键菜单监听的元素
        */
       addMenuLiELement(
-        menuEvent: PointerEvent,
+        menuEvent: PointerEvent | TouchEvent,
         $root: HTMLDivElement,
         $menu: HTMLDivElement,
         dataConfig: PopsRightClickMenuDataConfig[],

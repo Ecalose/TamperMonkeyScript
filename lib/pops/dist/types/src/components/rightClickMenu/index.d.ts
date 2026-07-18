@@ -5,7 +5,7 @@ export declare const PopsRightClickMenu: {
         config: DeepRequired<PopsRightClickMenuConfig>;
         addWindowCheckClickListener: () => void;
         removeWindowCheckClickListener: () => void;
-        addContextMenuEvent: (target: PopsRightClickMenuConfig["$target"], selector?: string) => void;
+        addContextMenuEvent: (target: NonNullable<PopsRightClickMenuConfig["$target"]>, selector?: string) => void;
         removeContextMenuEvent: (target: HTMLElement | typeof globalThis | Window, selector?: string) => void;
         /**
          * 移除初始化时的添加的监听事件
@@ -47,13 +47,13 @@ export declare const PopsRightClickMenu: {
              * @param event
              * @param selectorTarget
              */
-            contextMenuEvent(event: PointerEvent, selectorTarget: NonNullable<PopsRightClickMenuConfig["$target"]>): Promise<void>;
+            contextMenuEvent(event: PointerEvent | TouchEvent, selectorTarget: NonNullable<PopsRightClickMenuConfig["$target"]>): Promise<void>;
             /**
              * 添加contextmenu事件
              * @param target 目标
              * @param selector 子元素选择器
              */
-            addContextMenuEvent(target: PopsRightClickMenuConfig["$target"], selector?: string): void;
+            addContextMenuEvent(target: NonNullable<PopsRightClickMenuConfig["$target"]>, selector?: string): void;
             /**
              * 移除contextmenu事件
              * @param target 目标
@@ -103,7 +103,7 @@ export declare const PopsRightClickMenu: {
              * @param dataConfig
              * @param $listenerRootNode 右键菜单监听的元素
              */
-            showMenu(menuEvent: PointerEvent, dataConfig: PopsRightClickMenuDataConfig[], $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): HTMLDivElement;
+            showMenu(menuEvent: PointerEvent | TouchEvent, dataConfig: PopsRightClickMenuDataConfig[], $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): HTMLDivElement;
             /**
              * 显示子菜单
              * @param menuEvent 事件
@@ -113,7 +113,7 @@ export declare const PopsRightClickMenu: {
              * @param $targetLi 父li项元素
              * @param $listenerRootNode 右键菜单监听的元素
              */
-            showClildMenu(menuEvent: PointerEvent, posInfo: {
+            showClildMenu(menuEvent: PointerEvent | TouchEvent, posInfo: {
                 clientX: number;
                 clientY: number;
             }, dataConfig: PopsRightClickMenuDataConfig[], $root: HTMLDivElement, $targetLi: HTMLLIElement, $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): HTMLDivElement;
@@ -138,7 +138,7 @@ export declare const PopsRightClickMenu: {
              * @param dataConfig 配置
              * @param $listenerRootNode 右键菜单监听的元素
              */
-            addMenuLiELement(menuEvent: PointerEvent, $root: HTMLDivElement, $menu: HTMLDivElement, dataConfig: PopsRightClickMenuDataConfig[], $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): void;
+            addMenuLiELement(menuEvent: PointerEvent | TouchEvent, $root: HTMLDivElement, $menu: HTMLDivElement, dataConfig: PopsRightClickMenuDataConfig[], $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): void;
         };
     };
 };

@@ -30,21 +30,22 @@ table.pops-folder-list-table__header {
   table-layout: fixed;
   border-collapse: collapse;
   border-spacing: 0;
+}
+.pops-folder-list-table__header-div,
+.pops-folder-list-table__body-div {
   padding: 0 20px;
 }
 table.pops-folder-list-table__body,
 table.pops-folder-list-table__header {
-  height: 100%;
+  height: auto;
   background: 0 0;
   overflow: hidden;
-  display: -webkit-box;
-  display: -ms-flexbox;
   -ms-flex-direction: column;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
 }
 table.pops-folder-list-table__body {
-  height: 100%;
+  height: auto;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;

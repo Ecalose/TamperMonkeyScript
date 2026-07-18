@@ -51,7 +51,7 @@ export interface PopsRightClickMenuDataConfig {
      * + false 不关闭菜单
      *
      */
-    callback?: (clickEvent: PointerEvent, contextMenuEvent: PointerEvent, $li: HTMLLIElement, $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>) => IPromise<boolean | void>;
+    callback?: (clickEvent: PointerEvent | TouchEvent, contextMenuEvent: PointerEvent | TouchEvent, $li: HTMLLIElement, $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>) => IPromise<boolean | void>;
     /**
      * 子项配置
      */
@@ -130,5 +130,5 @@ export interface PopsRightClickMenuConfig extends Pick<PopsGeneralConfig, "useSh
      *
      * + `false`：阻止默认行为（显示菜单）
      */
-    beforeShowCallBack?(event: PointerEvent): IPromise<false | void>;
+    beforeShowCallBack?(event: PointerEvent | TouchEvent): IPromise<false | void>;
 }

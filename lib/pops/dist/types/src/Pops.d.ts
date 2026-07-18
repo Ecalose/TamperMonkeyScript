@@ -1029,7 +1029,7 @@ declare class Pops {
         config: DeepRequired<PopsRightClickMenuConfig>;
         addWindowCheckClickListener: () => void;
         removeWindowCheckClickListener: () => void;
-        addContextMenuEvent: (target: PopsRightClickMenuConfig["$target"], selector?: string) => void;
+        addContextMenuEvent: (target: NonNullable<PopsRightClickMenuConfig["$target"]>, selector?: string) => void;
         removeContextMenuEvent: (target: HTMLElement | typeof globalThis | Window, selector?: string) => void;
         removeInitEventListener: {
             contextMenu(): void;
@@ -1046,8 +1046,8 @@ declare class Pops {
             shadowRootCheckClickEvent(event: MouseEvent | PointerEvent): void;
             addWindowCheckClickListener(): void;
             removeWindowCheckClickListener(): void;
-            contextMenuEvent(event: PointerEvent, selectorTarget: NonNullable<PopsRightClickMenuConfig["$target"]>): Promise<void>;
-            addContextMenuEvent(target: PopsRightClickMenuConfig["$target"], selector?: string): void;
+            contextMenuEvent(event: PointerEvent | TouchEvent, selectorTarget: NonNullable<PopsRightClickMenuConfig["$target"]>): Promise<void>;
+            addContextMenuEvent(target: NonNullable<PopsRightClickMenuConfig["$target"]>, selector?: string): void;
             removeContextMenuEvent(target: HTMLElement | typeof globalThis | Window, selector?: string): void;
             animationCloseMenu($menu: HTMLElement): void;
             closeAllMenu($root: HTMLElement): void;
@@ -1065,8 +1065,8 @@ declare class Pops {
                 bottom: number;
                 left: number;
             };
-            showMenu(menuEvent: PointerEvent, dataConfig: import("./components/rightClickMenu/types").PopsRightClickMenuDataConfig[], $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): HTMLDivElement;
-            showClildMenu(menuEvent: PointerEvent, posInfo: {
+            showMenu(menuEvent: PointerEvent | TouchEvent, dataConfig: import("./components/rightClickMenu/types").PopsRightClickMenuDataConfig[], $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): HTMLDivElement;
+            showClildMenu(menuEvent: PointerEvent | TouchEvent, posInfo: {
                 clientX: number;
                 clientY: number;
             }, dataConfig: import("./components/rightClickMenu/types").PopsRightClickMenuDataConfig[], $root: HTMLDivElement, $targetLi: HTMLLIElement, $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): HTMLDivElement;
@@ -1077,7 +1077,7 @@ declare class Pops {
                 $menu: HTMLElement;
                 $parentItem: HTMLElement;
             }): void;
-            addMenuLiELement(menuEvent: PointerEvent, $root: HTMLDivElement, $menu: HTMLDivElement, dataConfig: import("./components/rightClickMenu/types").PopsRightClickMenuDataConfig[], $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): void;
+            addMenuLiELement(menuEvent: PointerEvent | TouchEvent, $root: HTMLDivElement, $menu: HTMLDivElement, dataConfig: import("./components/rightClickMenu/types").PopsRightClickMenuDataConfig[], $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>): void;
         };
     };
     /**

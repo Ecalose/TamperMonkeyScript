@@ -54,8 +54,8 @@ export interface PopsRightClickMenuDataConfig {
    *
    */
   callback?: (
-    clickEvent: PointerEvent,
-    contextMenuEvent: PointerEvent,
+    clickEvent: PointerEvent | TouchEvent,
+    contextMenuEvent: PointerEvent | TouchEvent,
     $li: HTMLLIElement,
     $listenerRootNode: NonNullable<PopsRightClickMenuConfig["$target"]>
   ) => IPromise<boolean | void>;
@@ -141,5 +141,5 @@ export interface PopsRightClickMenuConfig extends Pick<
    *
    * + `false`：阻止默认行为（显示菜单）
    */
-  beforeShowCallBack?(event: PointerEvent): IPromise<false | void>;
+  beforeShowCallBack?(event: PointerEvent | TouchEvent): IPromise<false | void>;
 }
