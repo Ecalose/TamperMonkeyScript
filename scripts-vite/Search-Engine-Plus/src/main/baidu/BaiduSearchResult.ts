@@ -30,65 +30,95 @@ export const BaiduSearchResult = {
     markUnsafeLink: boolean;
   }) {
     log.info(`搜索结果优化`, config);
-    const resultSelector = "#content_left > div";
+
     const lockFn = new utils.LockFunction(() => {
-      const $results = $$(resultSelector + ":not([data-hijack])");
+      const $results = $$("#content_left > div:not([data-hijack])");
       for (const $result of $results) {
         if (config.removeAds && DOMUtils.selector('.se_st_footer:contains("广告")', $result)) {
           // 移除广告
           $result.remove();
           continue;
         }
-        const mu = $result.getAttribute("mu");
-        /** 真实链接 */
-        let realLink = mu;
-        if (!realLink) {
-          continue;
-        }
-        realLink = realLink.trim();
         /** 标题 */
         const $title =
           $result.querySelector<HTMLAnchorElement>("a.sc-link[href]") ||
           $result.querySelector<HTMLAnchorElement>(".c-title a[href]") ||
-          $result.querySelector<HTMLAnchorElement>("a.cosc-title-a[href]");
+          $result.querySelector<HTMLAnchorElement>("a.cosc-title-a[href]") ||
+          $result.querySelector<HTMLAnchorElement>('[class*="c-line-"] > a[href][class^="title_"]');
+        if (!$title) continue;
+        /** 真实链接，但有时候这个链接是错误的链接，需要处理一下 */
+        const mu = $result.getAttribute("mu");
+        const realLinkList: string[] = [];
+        if (typeof mu === "string") {
+          realLinkList.push(mu);
+        }
+        /** 举报的网站 - 一般这里也能获取到真实链接 */
+        const $feedback = $result.querySelector<HTMLElement>(".cosc-feedback[data-feedback]");
+        const feedbackStr = $feedback?.getAttribute("data-feedback");
+        if (feedbackStr) {
+          const feedback = utils.toJSON(feedbackStr);
+          if (typeof feedback.url === "string") {
+            realLinkList.push(feedback.url);
+          }
+        }
 
-        if ($title) {
-          if (config.redirect) {
-            // 重定向
-            $title.href = realLink;
-            $result.setAttribute("data-hijack", "true");
-          }
-          if (config.addFavicon) {
-            // 在前面添加图标
-            const $ico = DOMUtils.createElement("img");
-            $ico.className = "website-ico";
-            try {
-              const realLinkInst = new URL(realLink);
-              $ico.src = `${realLinkInst.origin}/favicon.ico`;
-              DOMUtils.prepend($title, $ico);
-              DOMUtils.css($title, {
-                display: "flex",
-                "align-items": "center",
-              });
-              DOMUtils.on($ico, "error", () => {
-                $ico.remove();
-              });
-            } catch {}
-          }
-          if (config.markUnsafeLink) {
-            // 显示不安全的链接
-            if (realLink.trim().startsWith("http://")) {
-              DOMUtils.prepend(
-                $title,
-                /*html*/ `
+        const realLink = realLinkList.find((link) => {
+          try {
+            const linkInst = new URL(link);
+            if (linkInst.hostname === "nourl.ubs.baidu.com" || linkInst.hostname.endsWith(".lightapp.baidu.com")) {
+              return;
+            }
+            if (
+              linkInst.hostname === "www.baidu.com" &&
+              linkInst.pathname === "/link" &&
+              linkInst.searchParams.has("url")
+            ) {
+              // 百度的中转重定向链接
+              // http://www.baidu.com/link?url=xxxx
+              return;
+            }
+          } catch {}
+          return link;
+        });
+
+        if (!realLink) continue;
+        $result.setAttribute("data-hijack", "true");
+        const titleUrl = $title.getAttribute("href")!;
+        if (config.redirect) {
+          // 重定向
+          $title.href = realLink;
+          $result.setAttribute("data-before-url", titleUrl);
+        }
+        if (config.addFavicon) {
+          // 在前面添加图标
+          const $ico = DOMUtils.createElement("img");
+          $ico.className = "website-ico";
+          try {
+            const realLinkInst = new URL(realLink);
+            $ico.src = `${realLinkInst.origin}/favicon.ico`;
+            DOMUtils.prepend($title, $ico);
+            DOMUtils.css($title, {
+              display: "flex",
+              "align-items": "center",
+            });
+            DOMUtils.on($ico, "error", () => {
+              $ico.remove();
+            });
+          } catch {}
+        }
+        if (config.markUnsafeLink) {
+          // 显示不安全的链接
+          if (realLink.startsWith("http://")) {
+            DOMUtils.prepend(
+              $title,
+              /*html*/ `
                 <svg viewBox="0 0 1102 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" style="margin-right: 4px;"><path d="M1079.847385 767.133538l-389.513847-690.845538c-62.621538-101.651692-215.197538-101.769846-277.858461 0l-389.513846 690.806154c-64 103.896615 13.469538 235.441231 138.870154 235.441231H940.898462c125.282462 0 202.909538-131.426462 138.909538-235.401847zM551.384615 877.843692c-35.603692 0-64.590769-27.963077-64.590769-62.345846 0-34.343385 28.987077-62.306462 64.590769-62.306461 35.603692 0 64.590769 27.963077 64.59077 62.306461 0 34.382769-28.987077 62.345846-64.59077 62.345846z m64.59077-249.304615c0 34.343385-28.987077 62.306462-64.59077 62.306461-35.603692 0-64.590769-27.963077-64.590769-62.345846V316.849231c0-34.382769 28.987077-62.345846 64.590769-62.345846 35.603692 0 64.590769 27.963077 64.59077 62.345846v311.650461z" fill="#ED4662" p-id="6187"></path></svg>
               `
-              );
-              DOMUtils.css($title, {
-                color: "#ecb3b3 !important",
-                "text-decoration": "line-through !important",
-              });
-            }
+            );
+            DOMUtils.css($title, {
+              color: "#ecb3b3 !important",
+              "text-decoration": "line-through !important",
+            });
           }
         }
       }

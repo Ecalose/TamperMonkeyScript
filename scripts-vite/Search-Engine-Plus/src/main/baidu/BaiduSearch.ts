@@ -49,27 +49,45 @@ export const BaiduSearch = {
   searchResultShowOptimization(mode: SearchResultShowType) {
     log.info(`搜索结果显示优化: ` + mode);
 
+    const resultContainerCSS = (resultCardCSSText: string, contentLeftCSSText?: string) => {
+      return /*css*/ `
+        #container #content_left{
+        & > .c-container,
+        & > .new-pmd{
+          ${resultCardCSSText}
+        }
+
+        ${contentLeftCSSText || ""}
+      }
+      `;
+    };
+
     const result: any[] = [
-      addStyleWithEnd(/*css*/ `
-        /* AI回答结果变成滚动条形式 */
-        #container #content_left .cosc-card-content [class^="fold-content_"]{
-          min-height: unset !important;
-          overflow: auto !important;
-        }
-        /* 隐藏展开按钮 */
-        #container #content_left .cosc-card-content [class^="wenda-general-fold-switch_"]{
-          display: none !important;
-        }
-      `),
+      addStyleWithEnd(
+        resultContainerCSS(
+          "",
+          /*css*/ `
+          /* AI回答结果变成滚动条形式 */
+          & .cosc-card-content [class^="fold-content_"]{
+            min-height: unset !important;
+            overflow: auto !important;
+          }
+          /* 隐藏展开按钮 */
+          & .cosc-card-content [class^="wenda-general-fold-switch_"]{
+            display: none !important;
+          }
+      `
+        )
+      ),
     ];
 
-    const titleHoverCSS = /*css*/ `
-      #container #content_left > .c-container a.cosc-title-a,
-      #container #content_left > .c-container .c-title a[href],
-      #container #content_left > .c-container [class*="_sc-title"] a.sc-link {
-          & {
-              position: relative;
-          }
+    /** 标题鼠标悬浮背景色 */
+    const titleHoverCSS = resultContainerCSS(/*css*/ `
+      & a.cosc-title-a,
+      & .c-title a[href],
+      & [class*="_sc-title"] a.sc-link,
+      & [class*="c-line-"]:has(> a[href][class^="title_"]) {
+          position: relative;
 
           &,
           & span,
@@ -94,8 +112,7 @@ export const BaiduSearch = {
               left: 0;
           }
       }
-
-    `;
+    `);
 
     const centerCSS = /*css*/ `
       #container{
@@ -108,9 +125,16 @@ export const BaiduSearch = {
           justify-self: center;
           float: unset;
       }
-      #container #content_left > .c-container{
+      ${resultContainerCSS(/*css*/ `
+        &{
           width: 100%;
-      }
+        }
+        /* 内容宽度适配 */
+        & .c-row .c-span-last[class*="content_"]{
+          width: auto;
+          float: unset;
+        }
+      `)}
       /* 顶部输入框居中 */
       .head_wrapper .s_form,
       .input-head-wrapper [class^="head-left_"]{
@@ -130,10 +154,9 @@ export const BaiduSearch = {
       #header_top_bar{
         margin: 0 auto;
       }
-      /* 内容宽度适配 */
-      #container #content_left > .c-container .c-row .c-span-last[class*="content_"]{
-        width: auto;
-        float: unset;
+      /* 顶部的搜索结果涉及价格仅作参考，请以商家官网为准 */
+      #content_left > div:first-child:not(:has(*)) {
+          text-align: center;
       }
       /* 页码居中 */
       #page [class^="page-inner"]{
@@ -149,65 +172,79 @@ export const BaiduSearch = {
       #foot .foot-inner #help{
         margin: 0 !important;
       }
-      /* 搜索结果涉及价格仅作参考，请以商家官网为准 */
-      #content_left > div:first-child:not(:has(*)) {
-          text-align: center;
-      }
 
       `;
-    const resultCSS = /*css*/ `
-      #content_left > .c-container{
-        padding: 15px 20px 15px 20px;
-        margin-top: 0;
-        margin-left: 0;
-        margin-bottom: 30px;
-        border-radius: 8px;
-        background-color: #fff;
-        box-sizing: border-box;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-      }
-      /* AI总结卡片 样式移除 */
-      #content_left > .c-container [class*="card-border"]{
-        border: none;
-        border-radius: 0px;
-      }
-      #content_left > .c-container [class*="card-border"] [class^="baikan-card-header"]{
-        background: none;
-      }
-      /* 标题背景色 */
-      #content_left > .c-container a.sc-link[href],
-      #content_left > .c-container .c-title a[href],
-      #content_left > .c-container [class*="title-box_"]{
-          background-color: #f8f8f8;
-          width: 100%;
-          margin: 0px -20px;
-          padding: 5px 20px;
-      }
-      /* 标题高度适配 */
-      #content_left > .c-container [class*="title-wrapper"] {
+    const resultCSS = resultContainerCSS(/*css*/ `
         &{
-          margin-bottom: 8px;
+          padding: 15px 20px 15px 20px;
+          margin-top: 0;
+          margin-left: 0;
+          margin-bottom: 30px;
+          border-radius: 8px;
+          background-color: #fff;
+          box-sizing: border-box;
+          border: 1px solid rgba(0, 0, 0, 0.1);
+          box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+          transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
-        & [class*="title-box"],
-        & [class*="title-box"] h3.cosc-title{
-          margin-bottom: 0px;
-          padding-bottom: 0px;
+        
+        /* AI总结卡片 样式移除 */
+        & [class*="card-border"]{
+          border: none;
+          border-radius: 0px;
         }
-      }
+        & [class*="card-border"] [class^="baikan-card-header"]{
+          background: none;
+        }
+        /* 标题背景色 */
+        & a.sc-link[href],
+        & .c-title a[href],
+        & [class*="title-box_"],
+        & [class*="c-line-"]:has(> a[href][class^="title_"]),
+        & [class*="title-container_"]:has(>.cosc-title a.cosc-title-a){
+            background-color: #f8f8f8;
+            width: 100%;
+            max-width: unset;
+            margin: 0px -20px;
+            padding: 5px 20px;
+        }
+        /* 标题宽度适配（撑满） */
+        & [class*="c-line-"] > a[href][class^="title_"],
+        & [class*="title-container_"] >.cosc-title a.cosc-title-a{
+          width: 100%;
+          max-width: unset;
+          display: inline-flex !important;
+        }
+        /* 标题容器高度适配 */
+        & [class*="title-wrapper"] {
+          &{
+            margin-bottom: 8px;
+          }
+          & [class*="title-box"],
+          & [class*="title-box"] h3.cosc-title{
+            margin-bottom: 0px;
+            padding-bottom: 0px;
+          }
+        }
 
-      /* 标题移除省略号 */
-      #content_left > .c-container .c-title a,
-      #content_left > .c-container a.cosc-title-a{
-        white-space: nowrap;
-        text-overflow: ellipsis;
-        overflow: hidden;
-        width: 100%;
-      }
-    `;
-    const moreColumnCSS = /*css*/ `
-      #container #content_left{
+        /* 标题移除省略号 */
+        & .c-title a,
+        & a.cosc-title-a{
+          white-space: nowrap;
+          text-overflow: ellipsis;
+          overflow: hidden;
+          width: 100%;
+        }
+    `);
+    const moreColumnCSS = resultContainerCSS(
+      /*css*/ `
+       & .c-row[class*="source_"]:has(a),
+       & .cos-row [class*="source-pc_"]{
+          position: relative;
+        }
+      `,
+      /*css*/ `
+      &{
         display: grid;
         grid-template-columns: repeat(2, 48%);
         grid-gap: 0 20px;
@@ -220,20 +257,20 @@ export const BaiduSearch = {
         max-width: 1400px;
         margin-bottom: 30px;
       }
-      #container #content_left .c-row[class*="source_"]:has(a),
-      #container #content_left .cos-row [class*="source-pc_"]{
-        position: relative;
-      }
-    `;
+    `
+    );
     result.push(addStyleWithEnd(resultCSS), addStyleWithEnd(titleHoverCSS));
     if (mode === "single-center") {
       // 单列居中
       result.push(
         addStyleWithEnd(centerCSS),
         addStyleWithEnd(/*css*/ `
-        #container #content_left > .c-container {
+        #container #content_left{
+          & > .c-container,
+          & > .new-pmd{
             width: 55%;
             justify-self: center;
+          }
         }
       `)
       );
