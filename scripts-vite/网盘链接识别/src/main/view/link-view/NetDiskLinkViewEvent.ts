@@ -113,7 +113,7 @@ export const NetDiskLinkViewEvent = {
     };
     if (linkClickMode === "copy" || linkClickMode === "copy-closePopup") {
       // 复制
-      NetDiskLinkClickMode.copy(ruleKeyName, ruleIndex, shareCode, accessCode);
+      NetDiskLinkClickMode.copy({ ruleKeyName, ruleIndex, shareCode, accessCode });
       if (linkClickMode === "copy-closePopup") {
         // 关闭弹窗
         closePopup();

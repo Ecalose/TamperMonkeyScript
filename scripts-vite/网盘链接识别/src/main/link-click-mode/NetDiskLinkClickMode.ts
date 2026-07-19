@@ -183,21 +183,22 @@ export const NetDiskLinkClickMode = {
    * @param toastText 复制成功的提示的文字
    */
   copy(
-    ruleKeyName: string,
-    ruleIndex: number,
-    shareCode: string,
-    accessCode: AccessCodeType,
+    config: IArray<{
+      ruleKeyName: string;
+      ruleIndex: number;
+      shareCode: string;
+      accessCode: AccessCodeType;
+    }>,
     toastText: string = "已复制"
   ) {
+    log.success(`复制链接：`, CommonUtil.toStr(config));
+    // 待复制的文本
+    if (!Array.isArray(config)) {
+      config = [config];
+    }
+    const copyText = config.map((it) => NetDiskLinkClickModeUtils.getCopyUrlInfo(it)).join("\n");
     utils
-      .copy(
-        NetDiskLinkClickModeUtils.getCopyUrlInfo({
-          ruleKeyName,
-          ruleIndex,
-          shareCode,
-          accessCode,
-        })
-      )
+      .copy(copyText)
       .then((status) => {
         if (status) {
           Qmsg.success(toastText);

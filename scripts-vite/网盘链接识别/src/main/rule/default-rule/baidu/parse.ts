@@ -49,7 +49,15 @@ export class NetDiskParse_Baidu extends ParseFileCore {
     log.info("访问网址：", url);
     (document.body || document.documentElement).appendChild($form);
     if (enableCopy) {
-      NetDiskLinkClickMode.copy("baidu", ruleIndex, shareCode, accessCode, "1.5秒后跳转至解析站");
+      NetDiskLinkClickMode.copy(
+        {
+          ruleKeyName: "baidu",
+          ruleIndex,
+          shareCode,
+          accessCode,
+        },
+        "1.5秒后跳转至解析站"
+      );
       setTimeout(() => {
         $form.submit();
       }, 1500);

@@ -768,7 +768,7 @@ export const NetDiskLinkView = {
     accessCode: AccessCodeType,
     uiLinkText: string
   ) {
-    let $urlBox = DOMUtils.createElement("div", {
+    const $urlBox = DOMUtils.createElement("div", {
       className: "netdisk-url-box",
       innerHTML: /*html*/ `
 			<div class="netdisk-url-div">
@@ -777,7 +777,7 @@ export const NetDiskLinkView = {
           </div>
           <div class="netdisk-status"></div>
           <div class="netdisk-url">
-              <a  class="netdisk-link" href="javascript:;" isvisited="false"></a>
+              <a class="netdisk-link" href="javascript:;" isvisited="false"></a>
           </div>
       </div>
 			`,

@@ -52,6 +52,41 @@ type InfoListType = {
   shareCode: string;
   accessCode: string;
 };
+
+const getAcwScV2ByArg1 = (arg1: string) => {
+  const pwd = "3000176000856006061501533003690027800375";
+  const hexXor = function (box: string, pwd: string) {
+    let res = "";
+    for (let i = 0x0; i < box.length && i < pwd.length; i += 2) {
+      const tmp1 = Number.parseInt(box.slice(i, i + 2), 16);
+      const tmp2 = Number.parseInt(pwd.slice(i, i + 2), 16);
+      let tmp = (tmp1 ^ tmp2).toString(16);
+      if (tmp.length === 1) {
+        tmp = "0" + tmp;
+      }
+      res += tmp;
+    }
+    return res;
+  };
+  const unsbox = function (str: string) {
+    const code = [
+      15, 35, 29, 24, 33, 16, 1, 38, 10, 9, 19, 31, 40, 27, 22, 23, 25, 13, 6, 11, 39, 18, 20, 8, 14, 21, 32, 26, 2, 30,
+      7, 4, 17, 5, 3, 28, 34, 37, 12, 36,
+    ];
+    const res: string[] = [];
+    for (let i = 0; i < str.length; i++) {
+      const cur = str[i];
+      for (let j = 0; j < code.length; j++) {
+        if (code[j] === i + 1) {
+          res[j] = cur;
+        }
+      }
+    }
+    return res.join("");
+  };
+  const box = unsbox(arg1);
+  return hexXor(box, pwd);
+};
 /**
  * 蓝奏云
  *
@@ -149,13 +184,6 @@ export class NetDiskParse_Lanzou extends ParseFileCore {
      */
     sign: {
       match: /var[\s]*(posign|postsign|vidksek|skdklds)[\s]*=[\s]*'(.+?)';/,
-    },
-    /**
-     * 需要生成签名
-     */
-    need_sign: {
-      match: "acw_sc__v2=",
-      tip: "请先手动打开链接，生成acw_sc__v2参数",
     },
     /**
      * 蓝奏文件名
@@ -577,14 +605,30 @@ export class NetDiskParse_Lanzou extends ParseFileCore {
   /**
    * 获取链接页面的信息
    */
-  async getPageInfo(url: string) {
+  async getPageInfo(
+    url: string,
+    acw_sc__v2?: string
+  ): Promise<
+    | undefined
+    | HttpxResponseData<{
+        url: string;
+        headers: {
+          Accept: string;
+          "User-Agent": string;
+          Referer: string;
+          Cookie: string;
+        };
+        allowInterceptConfig: false;
+      }>
+  > {
     const response = await httpx.get({
       url: url,
       headers: {
         Accept: "*/*",
         "User-Agent": utils.getRandomPCUA(),
         Referer: url,
-        // 现在蓝奏限制了Cookie必须包含acw_sc__v2才可以获取到内容
+        // 现在蓝奏限制了Cookie必须包含 acw_sc__v2 才可以获取到内容
+        Cookie: acw_sc__v2 ? `acw_sc__v2=${acw_sc__v2}` : "",
       },
       allowInterceptConfig: false,
     });
@@ -608,6 +652,19 @@ export class NetDiskParse_Lanzou extends ParseFileCore {
       log.error(response);
       Qmsg.error("获取网页内容为空");
       return;
+    }
+    if (responseText.match(/acw_sc__v2=/)) {
+      const acw_sc__v2_arg1_Match = responseText.match(/var[\s]+arg1[\s]*=[\s]*('|")(.+?)('|")/);
+      if (acw_sc__v2_arg1_Match) {
+        const acw_sc__v2_arg1 = acw_sc__v2_arg1_Match[2];
+        log.info("获取arg1: " + acw_sc__v2_arg1);
+        const acw_sc__v2 = getAcwScV2ByArg1(acw_sc__v2_arg1);
+        log.info("生成acw_sc__v2: " + acw_sc__v2);
+        return await this.getPageInfo(url, acw_sc__v2);
+      } else {
+        Qmsg.error("获取arg1失败");
+        return;
+      }
     }
     if (!this.checkPageCode(response.data)) {
       log.error(response);
@@ -637,10 +694,6 @@ export class NetDiskParse_Lanzou extends ParseFileCore {
     }
     if (pageText.match(this.regexp.linkInValid.match)) {
       Qmsg.error(this.regexp.linkInValid.tip);
-      return false;
-    }
-    if (pageText.match(this.regexp.need_sign.match)) {
-      Qmsg.error(this.regexp.need_sign.tip);
       return false;
     }
     return true;

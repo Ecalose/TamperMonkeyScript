@@ -525,6 +525,27 @@ export const PanelUI_allSetting = (): PopsPanelContentConfig => {
                     void 0,
                     "匹配到链接时触发的UI执行"
                   ),
+                  UISelect(
+                    "链接显示类型",
+                    NetDiskGlobalData.features["netdisk-link-view-show-type"].KEY,
+                    NetDiskGlobalData.features["netdisk-link-view-show-type"].default,
+                    [
+                      {
+                        text: "默认",
+                        value: "uiLinkShow",
+                      },
+                      {
+                        text: "跳转的链接",
+                        value: "blank",
+                      },
+                      {
+                        text: "复制的链接",
+                        value: "copyUrl",
+                      },
+                    ],
+                    void 0,
+                    "匹配到链接时触发的UI执行"
+                  ),
                   UISwitch(
                     "自动填充访问码",
                     NetDiskGlobalData.features.autoFillAccessCode.KEY,

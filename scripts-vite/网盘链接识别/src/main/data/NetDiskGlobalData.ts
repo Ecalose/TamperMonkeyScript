@@ -148,6 +148,11 @@ export const NetDiskGlobalData = {
     "netdisk-rules-enable": GeneratePanelStorage("netdisk-rules-enable", true),
     /** 匹配模式 */
     "netdisk-match-mode": GeneratePanelStorage("netdisk-match-mode", "MutationObserver" as "MutationObserver" | "Menu"),
+    /** 链接显示类型 */
+    "netdisk-link-view-show-type": GeneratePanelStorage(
+      "netdisk-link-view-show-type",
+      "uiLinkShow" as "uiLinkShow" | "blank" | "copyUrl"
+    ),
     /** 行为模式 */
     "netdisk-behavior-mode": GeneratePanelStorage(
       "netdisk-behavior-mode",

@@ -426,7 +426,14 @@ export const NetDiskRegularExtractor = {
     }
     const ruleConfig =
       handlerConfig.debugConfig?.config ?? NetDisk.$rule.ruleOption[handlerConfig.ruleKeyName][handlerConfig.ruleIndex];
-    let uiLink = NetDiskRuleUtils.replacePlaceholder(ruleConfig.uiLinkShow, {
+    const showLinkType = NetDiskGlobalData.features["netdisk-link-view-show-type"].value;
+    let showLinkText = ruleConfig.uiLinkShow;
+    if (showLinkType === "blank") {
+      showLinkText = ruleConfig.blank;
+    } else if (showLinkType === "copyUrl") {
+      showLinkText = ruleConfig.copyUrl;
+    }
+    let uiLink = NetDiskRuleUtils.replacePlaceholder(showLinkText, {
       shareCode: handlerConfig.shareCode,
     });
     handlerConfig.debugConfig?.logCallBack?.({
