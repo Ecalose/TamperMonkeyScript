@@ -307,18 +307,36 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
                   views: [
                     {
                       type: "container",
-                      text: "视频信息",
+                      text: "视频的底部",
                       views: [
-                        UISwitch(
-                          "自动隐藏视频信息",
-                          "dy-video-titleInfoAutoHide",
-                          false,
+                        UISelect(
+                          "自动隐藏的控件",
+                          "dy-video-autoHideBottomControls",
+                          "",
+                          [
+                            {
+                              text: "无",
+                              value: "",
+                            },
+                            {
+                              text: "视频信息",
+                              value: "info",
+                            },
+                            {
+                              text: "视频控件",
+                              value: "controls",
+                            },
+                            {
+                              text: "视频信息 + 视频控件",
+                              value: "info-controls",
+                            },
+                          ],
                           void 0,
                           "鼠标移入时自动显示，鼠标移除时自动隐藏"
                         ),
                         UISlider(
                           "延迟自动隐藏的时间",
-                          "dy-video-titleInfoAutoHide-delayTime",
+                          "dy-video-autoHideBottomControls-delayTime",
                           3000,
                           0,
                           8000,
@@ -327,32 +345,6 @@ export const PanelVideoConfig: PopsPanelContentConfig = {
                             return `${value}ms`;
                           },
                           "设置首次延迟自动隐藏视频信息的时间，单位（ms）",
-                          100
-                        ),
-                      ],
-                    },
-                    {
-                      type: "container",
-                      text: "底部的视频控件",
-                      views: [
-                        UISwitch(
-                          "自动隐藏视频控件",
-                          "dy-video-videoControlsAutoHide",
-                          false,
-                          void 0,
-                          "鼠标移入时自动显示，鼠标移除时自动隐藏"
-                        ),
-                        UISlider(
-                          "延迟自动隐藏的时间",
-                          "dy-video-videoControlsAutoHide-delayTime",
-                          3000,
-                          0,
-                          8000,
-                          void 0,
-                          (value) => {
-                            return `${value}ms`;
-                          },
-                          "设置首次延迟自动隐藏视频标题的时间，单位（ms）",
                           100
                         ),
                       ],

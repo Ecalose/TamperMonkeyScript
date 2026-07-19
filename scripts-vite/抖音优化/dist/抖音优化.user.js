@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         抖音优化
 // @namespace    https://github.com/WhiteSevs/TamperMonkeyScript
-// @version      2026.7.10
+// @version      2026.7.19
 // @author       WhiteSevs
 // @description  视频过滤，包括广告、直播或自定义规则，屏蔽登录弹窗、自定义视频清晰度、禁止自动播放、自动进入全屏、双击进入全屏、屏蔽弹幕和礼物特效、手机模式、自定义视频和评论区背景色等
 // @license      GPL-3.0-only
@@ -10,10 +10,10 @@
 // @match        *://*.douyin.com/*
 // @match        *://*.iesdouyin.com/*
 // @exclude      *://creator.douyin.com/*
-// @require
+// @require      https://fastly.jsdelivr.net/gh/WhiteSevs/TamperMonkeyScript@86be74b83fca4fa47521cded28377b35e1d7d2ac/lib/CoverUMD/index.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/utils@2.12.2/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/domutils@2.0.8/dist/index.umd.js
-// @require      https://fastly.jsdelivr.net/npm/@whitesev/pops@4.2.8/dist/index.umd.js
+// @require      https://fastly.jsdelivr.net/npm/@whitesev/pops@4.2.9/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/qmsg@1.7.2/dist/index.umd.js
 // @connect      *
 // @connect      www.toutiao.com
@@ -121,6 +121,10 @@
       });
       selectorList = selectorList.map((it) => it.trim()).filter((it) => it !== "");
       if (selectorList.length) return addStyle(`${selectorList.join(",\n")}{display: none !important;}`);
+    },
+    addBlockCSSWithEnd(...args) {
+      const $css = CommonUtil.addBlockCSS(...args);
+      if ($css) document.documentElement.appendChild($css);
     },
     setGMResourceCSS(resourceMapData) {
       const cssText = typeof _GM_getResourceText === "function" ? _GM_getResourceText(resourceMapData.keyName) : null;
@@ -2077,6 +2081,7 @@
   };
   var addStyle = domUtils.addStyle.bind(domUtils);
   var addBlockCSS = CommonUtil.addBlockCSS.bind(CommonUtil);
+  CommonUtil.addBlockCSSWithEnd.bind(CommonUtil);
   var $ = _whitesev_domutils.default.selector.bind(_whitesev_domutils.default);
   var $$ = _whitesev_domutils.default.selectorAll.bind(_whitesev_domutils.default);
   var cookieManager = new utils$1.CookieManagerService({ baseCookieHandler: "GM_cookie" });
@@ -5659,103 +5664,98 @@
   };
   var mobile_default$1 =
     '/* 竖屏且高度小于550px */\n@media screen and (max-width: 550px) and (orientation: portrait) {\n  /* 右侧工具栏放大 */\n  .basePlayerContainer .positionBox {\n    bottom: 80px !important;\n    padding-right: 5px !important;\n    scale: unset !important;\n    transform: scale3d(1.12, 1.12, 1.12) !important;\n  }\n  /* 右侧工具栏的svg再放大 */\n  .basePlayerContainer .positionBox svg {\n    transform: scale3d(1.12, 1.12, 1.12);\n  }\n  /* 重置关注按钮的scale */\n  .basePlayerContainer .positionBox .dy-tip-container div[data-e2e="feed-follow-icon"] svg {\n    scale: unset !important;\n  }\n\n  /* 调整顶部搜索框的宽度 */\n  #douyin-header\n    div[data-click="doubleClick"]\n    > div[data-click="doubleClick"]\n    > div:has(input[data-e2e="searchbar-input"]) {\n    width: 150px;\n    padding-right: 0;\n    max-width: unset;\n    flex: 1;\n  }\n  /* 搜索框获取焦点时隐藏右侧的菜单 */\n  #douyin-header\n    div[data-click="doubleClick"]\n    > div[data-click="doubleClick"]:has(input[data-e2e="searchbar-input"]:focus)\n    [id^="douyin-header-menu"] {\n    display: none !important;\n  }\n  /* 搜索框获取焦点时自动放大宽度 */\n  #douyin-header\n    div[data-click="doubleClick"]\n    > div[data-click="doubleClick"]\n    > div:has(input[data-e2e="searchbar-input"]:focus) {\n    width: 100vw;\n    width: 100dvw;\n  }\n  /* 搜索页面 搜索详情的宽度、视频结果列表的宽度 */\n  #search-content-area > div,\n  #search-content-area > div div:has(+ #search-result-container),\n  #search-content-area > div #search-result-container {\n    width: 100%;\n    width: -webkit-fill-available;\n    width: -moz-available;\n  }\n  /* 搜索页面 视频右侧的工具栏缩小 */\n  #search-content-area .basePlayerContainer .positionBox {\n    bottom: 28px !important;\n    transform: scale3d(0.6, 0.6, 0.6) !important;\n  }\n  /* 搜索页面 搜索出的用户信息换行 */\n  #search-content-area #search-result-container ul[data-e2e="scroll-list"] li .search-result-card > div > div {\n    flex-wrap: wrap;\n  }\n  /* 搜索页面 搜索结果筛选选项 综合、视频、用户、直播的超出宽度换行 */\n  #search-content-area div:has(> div > div > span[data-key="general"]) {\n    overflow: auto;\n    gap: 10px;\n  }\n  /* 搜索页面 搜索结果筛选选项 */\n  #search-content-area div:has(> span[data-key="general"]) {\n    gap: 10px;\n  }\n  /* 搜索页面 搜索结果筛选选项弹窗修复 */\n  #search-content-area div:has(> div > span[data-key="general"]) {\n    position: unset !important;\n  }\n  /* 搜索页面 搜索结果筛选选项 */\n  #search-content-area div:has(> span[data-key="general"]) > * {\n    white-space: nowrap !important;\n    width: auto !important;\n    width: fit-content !important;\n    margin-left: 0px !important;\n    margin-right: 0px !important;\n  }\n  /* 去除设置min-width超出浏览器宽度的问题 */\n  body {\n    min-width: 100% !important;\n  }\n  /* 去除设置width导致顶部工具栏超出浏览器宽度的问题 */\n  #douyin-right-container #douyin-header {\n    width: 100%;\n  }\n  /* 去除设置 */\n  #douyin-right-container #douyin-header > div[data-click="doubleClick"] {\n    min-width: 100%;\n  }\n\n  /* /video/xxx页面 */\n  /* 点赞、评论、分享偏移 */\n  div[data-e2e="video-detail"] .leftContainer .basePlayerContainer .positionBox {\n    padding-right: 30px !important;\n  }\n  /* 底部工具栏右侧的按钮 */\n  div[data-e2e="video-detail"] .leftContainer .xgplayer.xgplayer-pc .xg-right-grid {\n    margin-right: 35px !important;\n  }\n  /* 评论区全屏 */\n  div[data-e2e="video-detail"] .leftContainer > div:has(.comment-mainContent[data-e2e="comment-list"]),\n  div[data-e2e="video-detail"] .leftContainer > div > div:has(.comment-mainContent[data-e2e="comment-list"]) {\n    width: 100dvw !important;\n  }\n\n  /* 设置视频区域的高度 */\n  #slidelist {\n    width: 100%;\n    height: calc(100dvh - var(--header-height)) !important;\n  }\n  /* 修正网页全屏下的视频高度 */\n  #slidelist[class*="isCssFullScreen"] {\n    height: round(nearest, 100dvh, 1px) !important;\n  }\n  /* 去除视频区域右侧偏移 */\n  .is-mobile-pc div[data-e2e="slideList"] {\n    padding-right: 0px !important;\n  }\n  /* 推荐视频的高度适配 */\n  #slidelist .page-recommend-container {\n    margin-top: 8px !important;\n    margin-bottom: 4px !important;\n  }\n  /* 网页全屏下的推荐视频的高度适配 */\n  #slidelist[class*="isCssFullScreen"] .page-recommend-container {\n    margin: 0px !important;\n  }\n  /* 底部工具栏右侧的按钮不换行显示 */\n  #slidelist .page-recommend-container xg-right-grid.xg-right-grid {\n    flex-wrap: nowrap;\n    white-space: nowrap;\n    overflow: auto;\n    align-items: start;\n    justify-content: start;\n    margin: 0px;\n  }\n}\n\n/* 横屏且高度小于550px */\n@media screen and (max-height: 550px) and (orientation: landscape) {\n  /* 右侧工具栏缩小 */\n  .basePlayerContainer .positionBox {\n    transform: scale(0.95) !important;\n    bottom: 42px !important;\n    padding-right: 10px !important;\n  }\n  /* 右侧工具栏的svg再缩小 */\n  .basePlayerContainer .positionBox svg {\n    transform: scale3d(0.95, 0.95, 0.95);\n  }\n  /* 修复全屏下不显示视频底部的控制栏 */\n  .isCssFullScreen [data-e2e="slideList"] {\n    min-height: auto !important;\n  }\n}\n';
-  var DouYinVideoElementAutoHide = (delayTimeKey, selectors) => {
-    const isInjectAttrName = "data-is-inject-mouse-hide";
+  var DouYinVideoElementAutoHideInjectAttr = "data-is-inject-mouse-hide";
+  var DouYinVideoElementAutoHide = (delayTimeKey, selectors, isImportant = true) => {
     const opacityShowAttrName = "data-opacity-show";
     const opacityHideAttrName = "data-opacity-hide";
     const result = [];
-    const delayTime = () => Panel.getValue(delayTimeKey);
-    const hideStyle = (__delayTime__ = delayTime()) => {
+    const delayTime = Panel.getDynamicValue(delayTimeKey, Panel.getDefaultValue(delayTimeKey));
+    const hideCSSText = (__delayTime__ = delayTime.value) => {
+      const importantCSSText = isImportant ? " !important" : "";
       if (__delayTime__ === 0)
         return `
             ${selectors.join(",")}{
-                opacity: 0 !important;
-                
-                &:hover,
-                &[${opacityShowAttrName}]{
-                    opacity: 1 !important;
+                opacity: 0${importantCSSText};
+                transition: ${__delayTime__ === 0 ? "none !important;" : "opacity .3s linear !important;"}
+
+                &[${opacityHideAttrName}]{
+                    opacity: 0${importantCSSText};
                 }
-                ${__delayTime__ === 0 ? "transition: none !important;" : ""}
+                &[${opacityShowAttrName}],
+                &:hover{
+                    opacity: 1${importantCSSText};
+                }
             }
             `;
       else
         return `
             ${selectors.join(",")}{
+                transition: opacity .3s linear !important;
+
                 &[${opacityHideAttrName}]{
-                    opacity: 0 !important;
+                    opacity: 0${importantCSSText};
+                }
+                &[${opacityShowAttrName}]{
+                    opacity: 1${importantCSSText};
                 }
                 &:hover{
-                    opacity: 1 !important;
+                    opacity: 1${importantCSSText};
                 }
             }
             `;
     };
-    const $style = addStyle(hideStyle());
+    const $style = addStyle(hideCSSText());
     result.push($style);
-    const listenerId = Panel.addValueChangeListener(delayTimeKey, (key, newValue, oldValue) => {
-      domUtils.html($style, hideStyle(newValue));
+    const listenerId = Panel.addValueChangeListener(delayTimeKey, (key, newValue) => {
+      domUtils.html($style, hideCSSText(newValue));
     });
     result.push(() => {
       Panel.removeValueChangeListener(listenerId);
     });
     const lockFn = new utils$1.LockFunction(() => {
       selectors.forEach((selector) => {
-        const $el = $(`${selector.trim()}:not([${isInjectAttrName}])`);
+        const $el = $(`${selector.trim()}:not([${DouYinVideoElementAutoHideInjectAttr}])`);
         if (!$el) return;
-        $el.setAttribute(isInjectAttrName, "");
+        if ($el.querySelector(`[data-is-inject-mouse-hide]`)) return;
+        if ($el.closest(`[data-is-inject-mouse-hide]`)) return;
+        $el.setAttribute(DouYinVideoElementAutoHideInjectAttr, "");
         let timeId = 0;
         const show = () => {
-          utils$1.workerClearTimeout(timeId);
-          if (delayTime() === 0) $el.setAttribute(opacityShowAttrName, "");
-          else $el.removeAttribute(opacityHideAttrName);
+          clearTimeout(timeId);
+          if (delayTime.value === 0) $el.setAttribute(opacityShowAttrName, "");
+          else {
+            $el.removeAttribute(opacityHideAttrName);
+            $el.setAttribute(opacityShowAttrName, "");
+          }
         };
-        const hide = (enableDelayTime = false) => {
-          utils$1.workerClearTimeout(timeId);
-          if (enableDelayTime) {
-            timeId = utils$1.workerSetTimeout(() => {
-              hide(false);
-            }, delayTime());
+        const hide = (isEnableDelayTime = false) => {
+          if (isEnableDelayTime) {
+            timeId = setTimeout(() => {
+              hide(!isEnableDelayTime);
+            }, delayTime.value);
             return;
           }
-          if (delayTime() === 0) $el.removeAttribute(opacityShowAttrName);
-          else $el.setAttribute(opacityHideAttrName, "");
+          if (delayTime.value === 0) $el.removeAttribute(opacityShowAttrName);
+          else {
+            $el.setAttribute(opacityHideAttrName, "");
+            $el.removeAttribute(opacityShowAttrName);
+          }
         };
-        const showListener = domUtils.on($el, ["mouseenter", "touchstart"], (event) => {
-          show();
-        });
-        const hideListener = domUtils.on($el, ["mouseleave", "touchend", "touchcancel"], (event) => {
-          hide();
-        });
         const interObserver = new IntersectionObserver(
           (entries) => {
-            const intersection = entries[0];
-            const intersectionObserverInfo = Reflect.get($el, "data-intersection-observer") || [];
-            if (intersection.isIntersecting) {
+            if (entries[0].isIntersecting) {
               show();
               hide(true);
-              intersectionObserverInfo.push({
-                time: utils$1.formatTime(),
-                message: "进入视图",
-                isIntersecting: intersection.isIntersecting,
-              });
-            } else
-              intersectionObserverInfo.push({
-                time: utils$1.formatTime(),
-                message: "离开视图",
-                isIntersecting: intersection.isIntersecting,
-              });
-            Reflect.set($el, "data-intersection-observer", intersectionObserverInfo);
+            }
           },
           {
             root: null,
-            rootMargin: "0px",
-            threshold: 0.03,
+            rootMargin: "50px",
+            threshold: 0.1,
           }
         );
         interObserver.observe($el);
         result.push(() => {
-          showListener.off();
-          hideListener.off();
           interObserver.unobserve($el);
           interObserver.disconnect();
         });
@@ -5767,7 +5767,7 @@
         childList: true,
       },
       immediate: true,
-      callback: (mutation, observer) => {
+      callback: () => {
         lockFn.run();
       },
     });
@@ -9306,11 +9306,8 @@
         Panel.execMenuOnce("mobileMode", () => {
           return this.mobileMode();
         });
-        Panel.execMenuOnce("dy-video-titleInfoAutoHide", () => {
-          return this.titleInfoAutoHide();
-        });
-        Panel.execMenuOnce("dy-video-videoControlsAutoHide", () => {
-          return this.videoControlsAutoHide();
+        Panel.execMenuOnce("dy-video-autoHideBottomControls", (config) => {
+          return this.autoHideBottomControls(config.value);
         });
         Panel.execMenuOnce("dy-video-rightToolBarAutoHide", () => {
           return this.rightToolBarAutoHide();
@@ -10299,20 +10296,45 @@
 		}
 		`);
     },
-    titleInfoAutoHide() {
-      log.info(`自动隐藏视频信息`);
-      return DouYinVideoElementAutoHide("dy-video-titleInfoAutoHide-delayTime", [
-        "#video-info-wrap",
-        ".basePlayerContainer .player-position-box-bottom",
-        '[data-e2e="feed-live"] .douyin-player > div:has([aria-label*="直播"])',
-      ]);
-    },
-    videoControlsAutoHide() {
-      log.info(`自动隐藏视频控件`);
-      return DouYinVideoElementAutoHide("dy-video-videoControlsAutoHide-delayTime", [
-        `xg-controls.xgplayer-controls`,
-        `[data-e2e="feed-live"] .douyin-player-controls`,
-      ]);
+    autoHideBottomControls(value) {
+      log.info(`自动隐藏视频底部的控件`);
+      const hideConfig = {
+        info: () =>
+          DouYinVideoElementAutoHide(
+            "dy-video-titleInfoAutoHide-delayTime",
+            [
+              "div:has(>#video-info-wrap)",
+              ".player-position-box-bottom",
+              '.douyin-player > div:has([aria-label*="直播"])',
+            ],
+            false
+          ),
+        controls: () =>
+          DouYinVideoElementAutoHide("dy-video-videoControlsAutoHide-delayTime", [
+            "xg-controls.xgplayer-controls",
+            ".douyin-player-controls",
+          ]),
+      };
+      if (value === "info") return hideConfig.info();
+      else if (value === "controls") return hideConfig.controls();
+      else if (value === "info-controls")
+        return [
+          hideConfig.info(),
+          hideConfig.controls(),
+          addStyle(`
+        div:has(div[${DouYinVideoElementAutoHideInjectAttr}]:hover #video-info-wrap) xg-controls.xgplayer-controls,
+        div:has(xg-controls.xgplayer-controls:hover) div:has(>#video-info-wrap)[data-opacity-hide],
+        div:has(.player-position-box-bottom:hover) xg-controls.xgplayer-controls,
+        div:has(xg-controls.xgplayer-controls:hover) .player-position-box-bottom{
+            opacity: 1 !important;
+        }
+        /* 直播 */
+        .douyin-player:has([${DouYinVideoElementAutoHideInjectAttr}]:hover [aria-label*="直播"]) .douyin-player-controls,
+        div:has(.douyin-player-controls:hover) .douyin-player > div:has([aria-label*="直播"]){
+          opacity: 1 !important;
+        }
+      `),
+        ];
     },
     rightToolBarAutoHide() {
       log.info(`自动隐藏右侧工具栏`);
@@ -13864,18 +13886,36 @@
                     views: [
                       {
                         type: "container",
-                        text: "视频信息",
+                        text: "视频的底部",
                         views: [
-                          UISwitch(
-                            "自动隐藏视频信息",
-                            "dy-video-titleInfoAutoHide",
-                            false,
+                          UISelect(
+                            "自动隐藏的控件",
+                            "dy-video-autoHideBottomControls",
+                            "",
+                            [
+                              {
+                                text: "无",
+                                value: "",
+                              },
+                              {
+                                text: "视频信息",
+                                value: "info",
+                              },
+                              {
+                                text: "视频控件",
+                                value: "controls",
+                              },
+                              {
+                                text: "视频信息 + 视频控件",
+                                value: "info-controls",
+                              },
+                            ],
                             void 0,
                             "鼠标移入时自动显示，鼠标移除时自动隐藏"
                           ),
                           UISlider(
                             "延迟自动隐藏的时间",
-                            "dy-video-titleInfoAutoHide-delayTime",
+                            "dy-video-autoHideBottomControls-delayTime",
                             3e3,
                             0,
                             8e3,
@@ -13884,32 +13924,6 @@
                               return `${value}ms`;
                             },
                             "设置首次延迟自动隐藏视频信息的时间，单位（ms）",
-                            100
-                          ),
-                        ],
-                      },
-                      {
-                        type: "container",
-                        text: "底部的视频控件",
-                        views: [
-                          UISwitch(
-                            "自动隐藏视频控件",
-                            "dy-video-videoControlsAutoHide",
-                            false,
-                            void 0,
-                            "鼠标移入时自动显示，鼠标移除时自动隐藏"
-                          ),
-                          UISlider(
-                            "延迟自动隐藏的时间",
-                            "dy-video-videoControlsAutoHide-delayTime",
-                            3e3,
-                            0,
-                            8e3,
-                            void 0,
-                            (value) => {
-                              return `${value}ms`;
-                            },
-                            "设置首次延迟自动隐藏视频标题的时间，单位（ms）",
                             100
                           ),
                         ],

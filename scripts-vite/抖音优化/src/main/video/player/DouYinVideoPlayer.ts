@@ -17,7 +17,7 @@ import { DouYinVideoBlock_BottomToolbar_PlayerComponents } from "../block/DouYin
 import { DouYinVideoBlock_BottomToolbar_videoInfo } from "../block/DouYinVideoBlock_BottomToolbar_videoInfo";
 import { DouYinVideoBlock_RightToolbar } from "../block/DouYinVideoBlock_RightToolbar";
 import MobileCSS from "../css/mobile.css?raw";
-import { DouYinVideoElementAutoHide } from "../DouYinVideoElementAutoHide";
+import { DouYinVideoElementAutoHide, DouYinVideoElementAutoHideInjectAttr } from "../DouYinVideoElementAutoHide";
 import { DouYinVideoFilter } from "../filter/DouYinVideoFilter";
 import { DouYinVideoFilterBase } from "../filter/DouYinVideoFilterBase";
 import { DouYinVideoPlayerBlockMouseHoverTip } from "./DouYinVideoPlayerBlockMouseHoverTip";
@@ -120,11 +120,8 @@ export const DouYinVideoPlayer = {
       Panel.execMenuOnce("mobileMode", () => {
         return this.mobileMode();
       });
-      Panel.execMenuOnce("dy-video-titleInfoAutoHide", () => {
-        return this.titleInfoAutoHide();
-      });
-      Panel.execMenuOnce("dy-video-videoControlsAutoHide", () => {
-        return this.videoControlsAutoHide();
+      Panel.execMenuOnce("dy-video-autoHideBottomControls", (config) => {
+        return this.autoHideBottomControls(config.value);
       });
       Panel.execMenuOnce("dy-video-rightToolBarAutoHide", () => {
         return this.rightToolBarAutoHide();
@@ -1470,28 +1467,52 @@ export const DouYinVideoPlayer = {
 		`);
   },
   /**
-   * 自动隐藏视频信息
+   * 自动隐藏视频底部的控件
    */
-  titleInfoAutoHide() {
-    log.info(`自动隐藏视频信息`);
-    return DouYinVideoElementAutoHide("dy-video-titleInfoAutoHide-delayTime", [
-      "#video-info-wrap",
-      // 播放器底部的信息，如：点击推荐
-      ".basePlayerContainer .player-position-box-bottom",
-      // 直播
-      '[data-e2e="feed-live"] .douyin-player > div:has([aria-label*="直播"])',
-    ]);
-  },
-  /**
-   * 自动隐藏视频控件
-   */
-  videoControlsAutoHide() {
-    log.info(`自动隐藏视频控件`);
-    return DouYinVideoElementAutoHide("dy-video-videoControlsAutoHide-delayTime", [
-      `xg-controls.xgplayer-controls`,
-      // 直播
-      `[data-e2e="feed-live"] .douyin-player-controls`,
-    ]);
+  autoHideBottomControls(value: "info" | "controls" | "info-controls") {
+    log.info(`自动隐藏视频底部的控件`);
+    const hideConfig = {
+      info: () =>
+        DouYinVideoElementAutoHide(
+          "dy-video-titleInfoAutoHide-delayTime",
+          [
+            "div:has(>#video-info-wrap)",
+            ".player-position-box-bottom",
+            // 直播
+            '.douyin-player > div:has([aria-label*="直播"])',
+          ],
+          false
+        ),
+      controls: () =>
+        DouYinVideoElementAutoHide("dy-video-videoControlsAutoHide-delayTime", [
+          "xg-controls.xgplayer-controls",
+          // 搜索页面的视频控件
+          ".douyin-player-controls",
+        ]),
+    };
+    if (value === "info") {
+      return hideConfig.info();
+    } else if (value === "controls") {
+      return hideConfig.controls();
+    } else if (value === "info-controls") {
+      return [
+        hideConfig.info(),
+        hideConfig.controls(),
+        addStyle(/*css*/ `
+        div:has(div[${DouYinVideoElementAutoHideInjectAttr}]:hover #video-info-wrap) xg-controls.xgplayer-controls,
+        div:has(xg-controls.xgplayer-controls:hover) div:has(>#video-info-wrap)[data-opacity-hide],
+        div:has(.player-position-box-bottom:hover) xg-controls.xgplayer-controls,
+        div:has(xg-controls.xgplayer-controls:hover) .player-position-box-bottom{
+            opacity: 1 !important;
+        }
+        /* 直播 */
+        .douyin-player:has([${DouYinVideoElementAutoHideInjectAttr}]:hover [aria-label*="直播"]) .douyin-player-controls,
+        div:has(.douyin-player-controls:hover) .douyin-player > div:has([aria-label*="直播"]){
+          opacity: 1 !important;
+        }
+      `),
+      ];
+    }
   },
   /**
    * 自动隐藏右侧工具栏
