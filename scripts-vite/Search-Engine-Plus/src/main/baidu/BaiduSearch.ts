@@ -14,6 +14,9 @@ export const BaiduSearch = {
     Panel.execMenuOnce("baidu-search-removeRelatedSearch", () => {
       return this.removeRelatedSearch();
     });
+    Panel.execMenuOnce("baidu-search-removeSelectTextDialog", () => {
+      return this.removeSelectTextDialog();
+    });
     Panel.execMenuOnce(["baidu-search-showOptimization-enable", "baidu-search-showOptimization-mode"], (config) => {
       const [enable, mode] = config.value;
       if (!enable) return;
@@ -42,6 +45,13 @@ export const BaiduSearch = {
   removeRelatedSearch() {
     log.info(`移除相关搜索`);
     return addBlockCSSWithEnd(".result-molecule:has(#rs_new)");
+  },
+  /**
+   * 移除选中文本弹窗
+   */
+  removeSelectTextDialog() {
+    log.info(`移除选中文本弹窗`);
+    return addBlockCSSWithEnd("#wrapper_wrapper > .selected-search-box");
   },
   /**
    * 搜索结果显示优化
@@ -156,7 +166,12 @@ export const BaiduSearch = {
       }
       /* 顶部的搜索结果涉及价格仅作参考，请以商家官网为准 */
       #content_left > div:first-child:not(:has(*)) {
-          text-align: center;
+        text-align: center;
+      }
+      /* 抱歉，未找到相关结果 */
+      #container .content_none{
+        float: unset;
+        margin: 0 auto;
       }
       /* 页码居中 */
       #page [class^="page-inner"]{
@@ -174,9 +189,10 @@ export const BaiduSearch = {
       }
 
       `;
-    const resultCSS = resultContainerCSS(/*css*/ `
+    const resultCSS = resultContainerCSS(
+      /*css*/ `
         &{
-          padding: 15px 20px 15px 20px;
+          padding: 15px 20px;
           margin-top: 0;
           margin-left: 0;
           margin-bottom: 30px;
@@ -235,7 +251,22 @@ export const BaiduSearch = {
           overflow: hidden;
           width: 100%;
         }
-    `);
+    `,
+      /*css*/ `
+      /* 您要找的是不是 xxx */
+      .result-molecule.hit-toptip > .c-gap-bottom-large{
+        margin-bottom: 0px;
+      }
+      /* 没有找到该URL。您可以直接访问 xxx */
+      .result-molecule > .hit_top_new.res-border-bottom{
+        &,
+        & [class*="gap-bottom-small"]{
+          margin-bottom: 0px;
+          border: 0px;
+        }
+      }
+    `
+    );
     const moreColumnCSS = resultContainerCSS(
       /*css*/ `
        & .c-row[class*="source_"]:has(a),
@@ -266,8 +297,7 @@ export const BaiduSearch = {
         addStyleWithEnd(centerCSS),
         addStyleWithEnd(/*css*/ `
         #container #content_left{
-          & > .c-container,
-          & > .new-pmd{
+          & > div:not(:empty){
             width: 55%;
             justify-self: center;
           }
@@ -276,7 +306,17 @@ export const BaiduSearch = {
       );
     } else if (mode === "double-column-center") {
       // 双列居中
-      result.push(addStyleWithEnd(moreColumnCSS), addStyleWithEnd(centerCSS));
+      result.push(
+        addStyleWithEnd(moreColumnCSS),
+        addStyleWithEnd(centerCSS),
+        addBlockCSSWithEnd(/*css*/ `
+        #container #content_left{
+          &>div:not(:empty){
+            max-width: 100%;
+          }
+        }
+        `)
+      );
     } else if (mode === "three-column-center") {
       // 三列居中
       result.push(
@@ -286,6 +326,9 @@ export const BaiduSearch = {
         #container #content_left{
           grid-template-columns: repeat(3, 33.3%);
           grid-template-areas: "xmain xmain xmain";
+          &>div:not(:empty){
+            max-width: 100%;
+          }
         }
       `)
       );
@@ -298,6 +341,9 @@ export const BaiduSearch = {
         #container #content_left{
           grid-template-columns: repeat(4, 25%);
           grid-template-areas: "xmain xmain xmain xmain";
+          &>div:not(:empty){
+            max-width: 100%;
+          }
         }
       `)
       );

@@ -11,6 +11,7 @@ export const Component_Google: PopsPanelContentConfig = {
       text: "通用",
       type: "container",
       views: [
+        UISwitch("移除AI概览", "google-search-removeAIOverview", false),
         UISwitch("移除右侧栏", "google-search-removeRightPanel", true),
         UISwitch("移除用户还搜索了", "google-search-removeRelatedSearch", true),
         UISwitch("移除相关问题", "google-search-removeQuestions", true),

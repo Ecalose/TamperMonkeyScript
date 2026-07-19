@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SearchEnginePlus
 // @namespace    https://github.com/WhiteSevs/TamperMonkeyScript
-// @version      2026.7.18
+// @version      2026.7.19
 // @author       WhiteSevs
 // @description  搜索引擎优化，包含以下搜索引擎：百度搜索、谷歌
 // @license      GPL-3.0-only
@@ -16,9 +16,8 @@
 // @require      https://fastly.jsdelivr.net/gh/WhiteSevs/TamperMonkeyScript@86be74b83fca4fa47521cded28377b35e1d7d2ac/lib/CoverUMD/index.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/utils@2.12.2/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/domutils@2.0.8/dist/index.umd.js
-// @require      https://fastly.jsdelivr.net/npm/@whitesev/pops@4.2.8/dist/index.umd.js
+// @require      https://fastly.jsdelivr.net/npm/@whitesev/pops@4.2.9/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/qmsg@1.7.2/dist/index.umd.js
-// @connect      *
 // @grant        GM_addValueChangeListener
 // @grant        GM_deleteValue
 // @grant        GM_getResourceText
@@ -2738,6 +2737,9 @@
       Panel.execMenuOnce("baidu-search-removeRelatedSearch", () => {
         return this.removeRelatedSearch();
       });
+      Panel.execMenuOnce("baidu-search-removeSelectTextDialog", () => {
+        return this.removeSelectTextDialog();
+      });
       Panel.execMenuOnce(["baidu-search-showOptimization-enable", "baidu-search-showOptimization-mode"], (config) => {
         const [enable, mode] = config.value;
         if (!enable) return;
@@ -2757,6 +2759,10 @@
     removeRelatedSearch() {
       log.info(`移除相关搜索`);
       return addBlockCSSWithEnd(".result-molecule:has(#rs_new)");
+    },
+    removeSelectTextDialog() {
+      log.info(`移除选中文本弹窗`);
+      return addBlockCSSWithEnd("#wrapper_wrapper > .selected-search-box");
     },
     searchResultShowOptimization(mode) {
       log.info(`搜索结果显示优化: ` + mode);
@@ -2863,7 +2869,12 @@
       }
       /* 顶部的搜索结果涉及价格仅作参考，请以商家官网为准 */
       #content_left > div:first-child:not(:has(*)) {
-          text-align: center;
+        text-align: center;
+      }
+      /* 抱歉，未找到相关结果 */
+      #container .content_none{
+        float: unset;
+        margin: 0 auto;
       }
       /* 页码居中 */
       #page [class^="page-inner"]{
@@ -2881,9 +2892,10 @@
       }
 
       `;
-      const resultCSS = resultContainerCSS(`
+      const resultCSS = resultContainerCSS(
+        `
         &{
-          padding: 15px 20px 15px 20px;
+          padding: 15px 20px;
           margin-top: 0;
           margin-left: 0;
           margin-bottom: 30px;
@@ -2942,7 +2954,22 @@
           overflow: hidden;
           width: 100%;
         }
-    `);
+    `,
+        `
+      /* 您要找的是不是 xxx */
+      .result-molecule.hit-toptip > .c-gap-bottom-large{
+        margin-bottom: 0px;
+      }
+      /* 没有找到该URL。您可以直接访问 xxx */
+      .result-molecule > .hit_top_new.res-border-bottom{
+        &,
+        & [class*="gap-bottom-small"]{
+          margin-bottom: 0px;
+          border: 0px;
+        }
+      }
+    `
+      );
       const moreColumnCSS = resultContainerCSS(
         `
        & .c-row[class*="source_"]:has(a),
@@ -2972,15 +2999,25 @@
           addStyleWithEnd(centerCSS),
           addStyleWithEnd(`
         #container #content_left{
-          & > .c-container,
-          & > .new-pmd{
+          & > div:not(:empty){
             width: 55%;
             justify-self: center;
           }
         }
       `)
         );
-      else if (mode === "double-column-center") result.push(addStyleWithEnd(moreColumnCSS), addStyleWithEnd(centerCSS));
+      else if (mode === "double-column-center")
+        result.push(
+          addStyleWithEnd(moreColumnCSS),
+          addStyleWithEnd(centerCSS),
+          addBlockCSSWithEnd(`
+        #container #content_left{
+          &>div:not(:empty){
+            max-width: 100%;
+          }
+        }
+        `)
+        );
       else if (mode === "three-column-center")
         result.push(
           addStyleWithEnd(moreColumnCSS),
@@ -2989,6 +3026,9 @@
         #container #content_left{
           grid-template-columns: repeat(3, 33.3%);
           grid-template-areas: "xmain xmain xmain";
+          &>div:not(:empty){
+            max-width: 100%;
+          }
         }
       `)
         );
@@ -3000,6 +3040,9 @@
         #container #content_left{
           grid-template-columns: repeat(4, 25%);
           grid-template-areas: "xmain xmain xmain xmain";
+          &>div:not(:empty){
+            max-width: 100%;
+          }
         }
       `)
         );
@@ -3053,6 +3096,9 @@
   };
   var GoogleSearch = {
     init() {
+      Panel.execMenuOnce("google-search-removeAIOverview", () => {
+        return this.removeAIOverview();
+      });
       Panel.execMenuOnce("google-search-removeRightPanel", () => {
         return this.removeRightPanel();
       });
@@ -3070,9 +3116,13 @@
       });
       GoogleSearchResult.init();
     },
+    removeAIOverview() {
+      log.info(`移除AI概览`);
+      return addBlockCSS("#rcnt > div:not([role='main']):not(:empty):has([data-mcpr])");
+    },
     removeRightPanel() {
       log.info(`移除右侧栏`);
-      return [addBlockCSS("#rhs")];
+      return addBlockCSS("#rhs");
     },
     removeRelatedSearch() {
       log.info(`移除用户还搜索了`);
@@ -3569,6 +3619,7 @@
           UISwitch("移除右侧栏", "baidu-search-removeRightPanel", true),
           UISwitch("移除大家都在搜", "baidu-search-removeEveryOneSearch", true),
           UISwitch("移除相关搜索", "baidu-search-removeRelatedSearch", true),
+          UISwitch("移除选中文本弹窗", "baidu-search-removeSelectTextDialog", true),
         ],
       },
       {
@@ -3622,6 +3673,7 @@
         text: "通用",
         type: "container",
         views: [
+          UISwitch("移除AI概览", "google-search-removeAIOverview", false),
           UISwitch("移除右侧栏", "google-search-removeRightPanel", true),
           UISwitch("移除用户还搜索了", "google-search-removeRelatedSearch", true),
           UISwitch("移除相关问题", "google-search-removeQuestions", true),

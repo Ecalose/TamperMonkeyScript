@@ -5,6 +5,9 @@ import { GoogleSearchResult } from "./GoogleSearchResult";
 
 export const GoogleSearch = {
   init() {
+    Panel.execMenuOnce("google-search-removeAIOverview", () => {
+      return this.removeAIOverview();
+    });
     Panel.execMenuOnce("google-search-removeRightPanel", () => {
       return this.removeRightPanel();
     });
@@ -23,11 +26,18 @@ export const GoogleSearch = {
     GoogleSearchResult.init();
   },
   /**
+   * 移除AI概览
+   */
+  removeAIOverview() {
+    log.info(`移除AI概览`);
+    return addBlockCSS("#rcnt > div:not([role='main']):not(:empty):has([data-mcpr])");
+  },
+  /**
    * 移除右侧栏
    */
   removeRightPanel() {
     log.info(`移除右侧栏`);
-    return [addBlockCSS("#rhs")];
+    return addBlockCSS("#rhs");
   },
   /**
    * 移除用户还搜索了
