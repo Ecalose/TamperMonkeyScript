@@ -10,3 +10,10 @@ allowBuilds:
 ignoredBuiltDependencies:
   - esbuild
   - vue-demi
+
+minimumReleaseAgeExclude:
+  - '@whitesev/data-paging'
+  - '@whitesev/domutils'
+  - '@whitesev/pops'
+  - '@whitesev/utils'
+  - 'qmsg'
