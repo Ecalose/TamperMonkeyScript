@@ -87,6 +87,7 @@ const CommonUtil = {
     if($css){
       document.documentElement.appendChild($css);
     }
+    return $css;
   },
   /**
    * 设置GM_getResourceText的style内容
