@@ -128,6 +128,10 @@ export const GoogleSearch = {
     [data-st-tgt="fb"] > div:not(:empty) [role="navigation"]{
         justify-self: center;
     }
+    /* 小提示： 限制此搜索仅展示xxx搜索结果。 详细了解如何按语言过滤搜索结果 */
+    [id^="center_"][role="main"] #taw{
+      justify-items: center;
+    }
     `;
     const resultCSS = /*css*/ `
         /* 搜索结果的样式和标题的悬浮样式 */

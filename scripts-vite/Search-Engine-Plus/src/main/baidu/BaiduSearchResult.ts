@@ -16,14 +16,14 @@ export const BaiduSearchResult = {
         const [enable, removeAds, redirect, addFavicon, markUnsafeLink] = config.value;
         if (!enable) return;
         if (!removeAds && !redirect && !addFavicon && !markUnsafeLink) return;
-        return this.searchResultShowOptimization({ removeAds, redirect, addFavicon, markUnsafeLink });
+        return this.searchResultOptimization({ removeAds, redirect, addFavicon, markUnsafeLink });
       }
     );
   },
   /**
    * 搜索结果优化
    */
-  searchResultShowOptimization(config: {
+  searchResultOptimization(config: {
     removeAds: boolean;
     redirect: boolean;
     addFavicon: boolean;

@@ -16,4 +16,13 @@ export const SearchEngineRouter = {
   isGoogleSearch() {
     return RouterUtil.builder().hostNameIncludes("google.com").pathname("/search").r();
   },
+  /**
+   * 必应搜索
+   */
+  isBingSearch() {
+    return RouterUtil.builder()
+      .hostNameMatch(/.*.bing.(com|net)$/)
+      .pathname("/search")
+      .r();
+  },
 };

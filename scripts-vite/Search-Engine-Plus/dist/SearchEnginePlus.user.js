@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         SearchEnginePlus
 // @namespace    https://github.com/WhiteSevs/TamperMonkeyScript
-// @version      2026.7.19
+// @version      2026.7.20
 // @author       WhiteSevs
-// @description  搜索引擎优化，包含以下搜索引擎：百度搜索、谷歌
+// @description  搜索引擎优化，包含以下搜索引擎：百度搜索、谷歌、Bing
 // @license      GPL-3.0-only
 // @icon         data:image/png;base64,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
 // @supportURL   https://github.com/WhiteSevs/TamperMonkeyScript/issues
@@ -13,6 +13,9 @@
 // @match        *://m.baidu.com/*
 // @match        *://*.google.com/search*
 // @match        *://*.google.com.hk/search*
+// @match        *://s.cn.bing.net/search*
+// @match        *://www.bing.com/search*
+// @match        *://cn.bing.com/search*
 // @require      https://fastly.jsdelivr.net/gh/WhiteSevs/TamperMonkeyScript@86be74b83fca4fa47521cded28377b35e1d7d2ac/lib/CoverUMD/index.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/utils@2.12.2/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/domutils@2.0.8/dist/index.umd.js
@@ -596,6 +599,12 @@
     isGoogleSearch() {
       return RouterUtil.builder().hostNameIncludes("google.com").pathname("/search").r();
     },
+    isBingSearch() {
+      return RouterUtil.builder()
+        .hostNameMatch(/.*.bing.(com|net)$/)
+        .pathname("/search")
+        .r();
+    },
   };
   var CommonUtil = {
     waitRemove(...args) {
@@ -633,6 +642,7 @@
     addBlockCSSWithEnd(...args) {
       const $css = CommonUtil.addBlockCSS(...args);
       if ($css) document.documentElement.appendChild($css);
+      return $css;
     },
     setGMResourceCSS(resourceMapData) {
       const cssText = typeof _GM_getResourceText === "function" ? _GM_getResourceText(resourceMapData.keyName) : null;
@@ -2610,7 +2620,7 @@
           const [enable, removeAds, redirect, addFavicon, markUnsafeLink] = config.value;
           if (!enable) return;
           if (!removeAds && !redirect && !addFavicon && !markUnsafeLink) return;
-          return this.searchResultShowOptimization({
+          return this.searchResultOptimization({
             removeAds,
             redirect,
             addFavicon,
@@ -2619,7 +2629,7 @@
         }
       );
     },
-    searchResultShowOptimization(config) {
+    searchResultOptimization(config) {
       log.info(`搜索结果优化`, config);
       const lockFn = new utils$1.LockFunction(() => {
         const $results = $$("#content_left > div:not([data-hijack])");
@@ -2980,8 +2990,8 @@
         `
       &{
         display: grid;
-        grid-template-columns: repeat(2, 48%);
         grid-gap: 0 20px;
+        grid-template-columns: repeat(2, 48%);
         grid-template-areas: "xmain xmain";
         margin: 0 auto;
         position: relative;
@@ -3058,11 +3068,11 @@
           const [enable, openBlank] = config.value;
           if (!enable) return;
           if (!openBlank) return;
-          return this.searchResultShowOptimization({ openBlank });
+          return this.searchResultOptimization({ openBlank });
         }
       );
     },
-    searchResultShowOptimization(config) {
+    searchResultOptimization(config) {
       log.info(`搜索结果优化`, config);
       const lockFn = new utils$1.LockFunction(() => {
         const $results = [
@@ -3201,6 +3211,10 @@
     [data-st-tgt="fb"] > div:not(:empty) [role="navigation"]{
         justify-self: center;
     }
+    /* 小提示： 限制此搜索仅展示xxx搜索结果。 详细了解如何按语言过滤搜索结果 */
+    [id^="center_"][role="main"] #taw{
+      justify-items: center;
+    }
     `;
       const resultCSS = `
         /* 搜索结果的样式和标题的悬浮样式 */
@@ -3282,10 +3296,252 @@
       return result;
     },
   };
+  var BingSearch = {
+    init() {
+      Panel.execMenuOnce("bing-search-removeAds", () => {
+        return this.removeAds();
+      });
+      Panel.execMenuOnce("bing-search-removeInputPrediction", () => {
+        return this.removeInputPrediction();
+      });
+      Panel.execMenuOnce("bing-search-bing-search-removeInputHistory", () => {
+        return this.removeInputHistory();
+      });
+      Panel.execMenuOnce("bing-search-bing-search-removeInputHistory-relatedToRecentSearches", () => {
+        return this.removeInputHistoryAndRelatedToRecentSearches();
+      });
+      Panel.execMenuOnce("bing-search-removeRightMoreSearchResult", () => {
+        return this.removeRightMoreSearchResult();
+      });
+      Panel.execMenuOnce("bing-search-removeCopilotSearch", () => {
+        return this.removeCopilotSearch();
+      });
+      Panel.execMenuOnce("bing-search-removeBottomFloatingToolbar", () => {
+        return this.removeBottomFloatingToolbar();
+      });
+      Panel.execMenuOnce("bing-search-removeOtherUserSearch", () => {
+        return this.removeOtherUserSearch();
+      });
+      Panel.execMenuOnce(["bing-search-showOptimization-enable", "bing-search-showOptimization-mode"], (config) => {
+        const [enable, mode] = config.value;
+        if (!enable) return;
+        if (utils$1.isNull(mode)) return;
+        return this.searchResultShowOptimization(mode);
+      });
+    },
+    removeAds() {
+      return addBlockCSSWithEnd(
+        "#b_bnp_bopc",
+        "#b_topw:has(.b_ad)",
+        "#b_results .b_ad",
+        "#b_results .b_algo:has(.jrwmcyhr)"
+      );
+    },
+    removeInputPrediction() {
+      log.info(`移除输入预测`);
+      return addStyleWithEnd(`
+    #b_header{
+      & #sa_ul ~ * {
+          display: none !important;
+      }
+
+      & #sa_ul {
+          width: 100% !important;
+      }
+
+      & #sb_form {
+          max-width: 600px;
+          white-space: nowrap;
+          & input.b_searchbox {
+              width: 500px;
+          }
+      }
+    }
+    `);
+    },
+    removeInputHistory() {
+      log.info(`移除输入历史记录`);
+      return addBlockCSSWithEnd("#b_header #sa_ul #sa_hs_block");
+    },
+    removeInputHistoryAndRelatedToRecentSearches() {
+      log.info(`移除输入历史记录 - 与最近的搜索相关`);
+      return addBlockCSSWithEnd("#b_header #sa_ul #sa_sse_block");
+    },
+    removeRightMoreSearchResult() {
+      log.info(`移除右侧更多搜索结果`);
+      return addBlockCSSWithEnd("#b_content aside");
+    },
+    removeCopilotSearch() {
+      log.info(`移除Copilot Search`);
+      return addBlockCSSWithEnd(
+        "#b_content .b_ans:has(.cht_container)",
+        '#b_content .b_ans:has(.answer_container[aria-label*="Copilot 搜索"])'
+      );
+    },
+    removeBottomFloatingToolbar() {
+      log.info(`移除底部悬浮的工具栏`);
+      return addBlockCSSWithEnd("#b_bop_cs_sb_place");
+    },
+    removeOtherUserSearch() {
+      log.info(`移除其它用户还搜索过`);
+      return addBlockCSSWithEnd(
+        '#b_results .b_ans:has(a[aria-label*="还搜索"])',
+        '#b_results .b_algo:has(a[aria-label*="还搜索"])'
+      );
+    },
+    searchResultShowOptimization(mode) {
+      const result = [];
+      const centerCSS = `
+      #b_header {
+          /* 输入框居中 */
+          & #sb_form {
+              display: block;
+              justify-self: center;
+              position: relative;
+
+
+              /* 仅让输入框居中，左边的logo图标在里面会造成视觉上的不居中 */
+              /* 这时候需要让logo移出文档流 */
+              & .b_logoArea{
+                left: 0;
+                position: absolute;
+                transform: translateX(-64px);
+                margin-left: 0;
+                margin-right: 0;
+                vertical-align: unset;
+                margin-top: 0px;
+                place-self: center;
+              }
+          }
+
+          /* 搜索结果类型居中 */
+          & nav.b_scopebar {
+              margin: 11px;
+              justify-self: center;
+          }
+      }
+
+      #b_content {
+          padding: 0;
+
+          /* 顶部某个网站的快捷功能 */
+          & #b_pole{
+            justify-items: center;
+          }
+          /* 约 xxx个结果 居中 */
+          & #b_tween {
+              text-align: center;
+              padding: 0;
+              margin: 10px;
+          }
+          /* 搜索结果居中 */
+          & #b_results,
+          & #b_mcw {
+              display: block;
+              justify-self: center;
+              max-width: 1400px;
+              width: auto;
+              margin: 32px 0px 0px 0px !important;
+          }
+      }
+    `;
+      const resultCardCSS = `
+      #b_results,
+      #b_mcw {
+        & .b_ans,
+        & .b_algo {
+            padding: 15px 20px;
+            margin-top: 0;
+            margin-left: 0;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            background-color: #fff;
+            box-sizing: border-box;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+        & .b_ans,
+        & .b_algo {
+          & .b_vlist2col{
+            justify-content: space-between;
+          }
+        }
+        /* xxx的视频 */
+        & .b_ans.b_vidAns:has(#serpvidans),
+        /* xxx的图片 */
+        & .b_ans.b_imgansacf{
+            padding: 15px 20px !important;
+        }
+        /* 页码 */
+        & .b_pag{
+            justify-self: center;
+        }
+      }
+      /* 顶部的特殊搜索结果卡片宽度溢出适配 */
+      #b_mcw #b_wpt_container{
+        width: 100% !important;
+      }
+    `;
+      const moreColumnCSS = `
+      #b_content {
+          & #b_results{
+            display: grid;
+            grid-template-columns: repeat(2, 48%);
+            grid-gap: 0 20px;
+            grid-template-areas: "xmain xmain";
+            margin: 0 auto;
+            position: relative;
+            padding-left: 2%;
+            float: unset;
+            width: 90%;
+            max-width: 1400px;
+            margin-bottom: 30px;
+          }
+      }     
+    `;
+      result.push(addStyleWithEnd(resultCardCSS), addStyleWithEnd(centerCSS));
+      if (mode === "single-center") {
+      } else if (mode === "double-column-center") result.push(addStyleWithEnd(moreColumnCSS));
+      else if (mode === "three-column-center")
+        result.push(
+          addStyleWithEnd(moreColumnCSS),
+          addBlockCSSWithEnd(`
+        #b_content {
+          & #b_results{
+            grid-template-columns: repeat(3, 33.3%);
+            grid-template-areas: "xmain xmain xmain";
+          }
+        }
+      `)
+        );
+      else if (mode === "four-column-center")
+        result.push(
+          addStyleWithEnd(moreColumnCSS),
+          addBlockCSSWithEnd(`
+        #b_content {
+          & #b_results{
+            grid-template-columns: repeat(4, 25%);
+            grid-template-areas: "xmain xmain xmain xmain";
+          }
+        }
+      `)
+        );
+      return result;
+    },
+  };
   var SearchEngine = {
     init() {
-      if (SearchEngineRouter.isBaiduSearch()) BaiduSearch.init();
-      else if (SearchEngineRouter.isGoogleSearch()) GoogleSearch.init();
+      if (SearchEngineRouter.isBaiduSearch()) {
+        log.info(`Baidu - 启动`);
+        BaiduSearch.init();
+      } else if (SearchEngineRouter.isGoogleSearch()) {
+        log.info(`Google - 启动`);
+        GoogleSearch.init();
+      } else if (SearchEngineRouter.isBingSearch()) {
+        log.info(`Bing - 启动`);
+        BingSearch.init();
+      }
     },
   };
   var UISwitch = function (
@@ -3718,7 +3974,61 @@
       },
     ],
   };
-  PanelContent.addContentConfig([Component_Common, Component_Baidu, Component_Google]);
+  var Component_Bing = {
+    id: "bing",
+    title: "Bing搜索",
+    isDefault: SearchEngineRouter.isBingSearch(),
+    views: [
+      {
+        text: "通用",
+        type: "container",
+        views: [
+          UISwitch("移除广告", "bing-search-removeAds", true),
+          UISwitch("移除输入预测", "bing-search-removeInputPrediction", false),
+          UISwitch("移除输入历史记录", "bing-search-removeInputHistory", false),
+          UISwitch(
+            "移除输入历史记录 - 与最近的搜索相关",
+            "bing-search-removeInputHistory-relatedToRecentSearches",
+            false
+          ),
+          UISwitch("移除右侧更多搜索结果", "bing-search-removeRightMoreSearchResult", true),
+          UISwitch("移除Copilot Search", "bing-search-removeCopilotSearch", false),
+          UISwitch("移除底部悬浮的工具栏", "bing-search-removeBottomFloatingToolbar", true),
+          UISwitch("移除其它用户还搜索过", "bing-search-removeOtherUserSearch", true),
+        ],
+      },
+      {
+        text: "显示模式优化",
+        type: "container",
+        views: [
+          UISwitch("开启", "bing-search-showOptimization-enable", true),
+          UISelect("模式", "bing-search-showOptimization-mode", "single-center", [
+            {
+              text: "无",
+              value: "",
+            },
+            {
+              text: "单列居中",
+              value: "single-center",
+            },
+            {
+              text: "双列居中",
+              value: "double-column-center",
+            },
+            {
+              text: "三列居中",
+              value: "three-column-center",
+            },
+            {
+              text: "四列居中",
+              value: "four-column-center",
+            },
+          ]),
+        ],
+      },
+    ],
+  };
+  PanelContent.addContentConfig([Component_Common, Component_Baidu, Component_Google, Component_Bing]);
   Panel.init();
   SearchEngine.init();
 })(DOMUtils, pops, Utils, Qmsg);

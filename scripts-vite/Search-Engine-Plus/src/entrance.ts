@@ -4,8 +4,9 @@ import { PanelContent } from "@components/setting/panel-content";
 import { Component_Common } from "./setting/view/general";
 import { Component_Baidu } from "./setting/view/baidu";
 import { Component_Google } from "./setting/view/google";
+import { Component_Bing } from "./setting/view/bing";
 
-PanelContent.addContentConfig([Component_Common, Component_Baidu, Component_Google]);
+PanelContent.addContentConfig([Component_Common, Component_Baidu, Component_Google, Component_Bing]);
 
 Panel.init();
 SearchEngine.init();

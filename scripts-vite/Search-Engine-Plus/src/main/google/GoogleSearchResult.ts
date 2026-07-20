@@ -9,14 +9,14 @@ export const GoogleSearchResult = {
         const [enable, openBlank] = config.value;
         if (!enable) return;
         if (!openBlank) return;
-        return this.searchResultShowOptimization({ openBlank });
+        return this.searchResultOptimization({ openBlank });
       }
     );
   },
   /**
    * 搜索结果优化
    */
-  searchResultShowOptimization(config: { openBlank: boolean }) {
+  searchResultOptimization(config: { openBlank: boolean }) {
     log.info(`搜索结果优化`, config);
 
     const lockFn = new utils.LockFunction(() => {

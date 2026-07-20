@@ -277,8 +277,8 @@ export const BaiduSearch = {
       /*css*/ `
       &{
         display: grid;
-        grid-template-columns: repeat(2, 48%);
         grid-gap: 0 20px;
+        grid-template-columns: repeat(2, 48%);
         grid-template-areas: "xmain xmain";
         margin: 0 auto;
         position: relative;
