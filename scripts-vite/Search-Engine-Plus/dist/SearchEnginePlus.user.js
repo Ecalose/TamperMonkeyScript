@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SearchEnginePlus
 // @namespace    https://github.com/WhiteSevs/TamperMonkeyScript
-// @version      2026.7.20
+// @version      2026.7.21
 // @author       WhiteSevs
 // @description  搜索引擎优化，包含以下搜索引擎：百度搜索、谷歌、Bing
 // @license      GPL-3.0-only
@@ -21,6 +21,7 @@
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/domutils@2.0.8/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/pops@4.2.9/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/qmsg@1.7.2/dist/index.umd.js
+// @connect      www.baidu.com
 // @grant        GM_addValueChangeListener
 // @grant        GM_deleteValue
 // @grant        GM_getResourceText
@@ -2606,6 +2607,7 @@
     if (cookieManager.isSupportCookieStore) cookieManager.setOptions({ baseCookieHandler: "cookieStore" });
     else cookieManager.setOptions({ baseCookieHandler: "document.cookie" });
   new utils$1.DocumentCookieHandler();
+  var BACKGROUND_URL = "https://bing.img.run/uhd.php";
   var BaiduSearchResult = {
     init() {
       Panel.execMenuOnce(
@@ -2631,19 +2633,26 @@
     },
     searchResultOptimization(config) {
       log.info(`搜索结果优化`, config);
+      const isDirectUrl = (url) => {
+        try {
+          const urlInst = new URL(url);
+          if (urlInst.hostname === "www.baidu.com" && urlInst.pathname === "/link" && urlInst.searchParams.has("url"))
+            return true;
+        } catch {}
+        return false;
+      };
       const lockFn = new utils$1.LockFunction(() => {
-        const $results = $$("#content_left > div:not([data-hijack])");
-        for (const $result of $results) {
+        $$("#content_left > div:not([data-hijack])").forEach(async ($result) => {
           if (config.removeAds && domUtils.selector('.se_st_footer:contains("广告")', $result)) {
             $result.remove();
-            continue;
+            return;
           }
           const $title =
             $result.querySelector("a.sc-link[href]") ||
             $result.querySelector(".c-title a[href]") ||
             $result.querySelector("a.cosc-title-a[href]") ||
             $result.querySelector('[class*="c-line-"] > a[href][class^="title_"]');
-          if (!$title) continue;
+          if (!$title) return;
           const mu = $result.getAttribute("mu");
           const realLinkList = [];
           if (typeof mu === "string") realLinkList.push(mu);
@@ -2652,23 +2661,34 @@
             const feedback = utils$1.toJSON(feedbackStr);
             if (typeof feedback.url === "string") realLinkList.push(feedback.url);
           }
-          const realLink = realLinkList.find((link) => {
+          let realLink = realLinkList.find((link) => {
             try {
               const linkInst = new URL(link);
               if (linkInst.hostname === "nourl.ubs.baidu.com" || linkInst.hostname.endsWith(".lightapp.baidu.com"))
                 return;
-              if (
-                linkInst.hostname === "www.baidu.com" &&
-                linkInst.pathname === "/link" &&
-                linkInst.searchParams.has("url")
-              )
-                return;
+              if (isDirectUrl(link)) return;
             } catch {}
             return link;
           });
-          if (!realLink) continue;
+          const titleUrl = $title.getAttribute("href").trim();
+          if (!realLink) {
+            const requestAttr = "data-direct-http-request-ing";
+            if ($title.hasAttribute(requestAttr)) return;
+            else if (isDirectUrl(titleUrl)) {
+              $title.setAttribute(requestAttr, "true");
+              const response = await httpx.get(titleUrl, {
+                fetch: false,
+                allowInterceptConfig: false,
+              });
+              $title.removeAttribute(requestAttr);
+              if (!response.status) return;
+              const finalUrl = response.data.finalUrl;
+              if (isDirectUrl(finalUrl)) return;
+              realLink = finalUrl;
+              $title.setAttribute("data-request-final-url", "true");
+            } else return;
+          }
           $result.setAttribute("data-hijack", "true");
-          const titleUrl = $title.getAttribute("href");
           if (config.redirect) {
             $title.href = realLink;
             $result.setAttribute("data-before-url", titleUrl);
@@ -2702,7 +2722,7 @@
               });
             }
           }
-        }
+        });
       });
       const observer = utils$1.mutationObserver(document, {
         config: {
@@ -2756,6 +2776,24 @@
         if (utils$1.isNull(mode)) return;
         return this.searchResultShowOptimization(mode);
       });
+      Panel.execMenuOnce(
+        [
+          "baidu-search-ownBackgroundImage-enable",
+          "baidu-search-ownBackgroundImage-url",
+          "baidu-search-ownBackgroundImage-opacity",
+        ],
+        (config) => {
+          const [enable, url, opacity] = config.value;
+          if (!enable) return;
+          if (utils$1.isNull(url)) return;
+          if (!opacity) return;
+          return this.ownBackgroundImage({
+            enable,
+            url,
+            opacity,
+          });
+        }
+      );
       BaiduSearchResult.init();
     },
     removeRightPanel() {
@@ -2780,7 +2818,8 @@
         return `
         #container #content_left{
         & > .c-container,
-        & > .new-pmd{
+        & > .new-pmd,
+        & > .c-group-wrapper{
           ${resultCardCSSText}
         }
 
@@ -2805,6 +2844,13 @@
       `
           )
         ),
+        addStyleWithEnd(`
+        #wrapper #head{
+            background-color: rgba(248, 248, 248, 0.4) !important;
+            border-bottom: none;
+            backdrop-filter: blur(10px);
+        }
+      `),
       ];
       const titleHoverCSS = resultContainerCSS(`
       & a.cosc-title-a,
@@ -2902,13 +2948,11 @@
       }
 
       `;
-      const resultCSS = resultContainerCSS(
+      const resultCardCSSText = resultContainerCSS(
         `
         &{
           padding: 15px 20px;
-          margin-top: 0;
-          margin-left: 0;
-          margin-bottom: 30px;
+          margin: 0 0 30px 0;
           border-radius: 8px;
           background-color: #fff;
           box-sizing: border-box;
@@ -2978,6 +3022,16 @@
           border: 0px;
         }
       }
+      /* 顶部的百度AI 大型卡片容器 */
+      .c-group-wrapper{
+        margin: 0px 0px 30px 0px !important;
+
+        & > .c-container,
+        & > .new-pmd{
+          padding: 0px !important;
+          width: 100% !important;
+        }
+      }
     `
       );
       const moreColumnCSS = resultContainerCSS(
@@ -3003,13 +3057,13 @@
       }
     `
       );
-      result.push(addStyleWithEnd(resultCSS), addStyleWithEnd(titleHoverCSS));
+      result.push(addStyleWithEnd(resultCardCSSText), addStyleWithEnd(titleHoverCSS));
       if (mode === "single-center")
         result.push(
           addStyleWithEnd(centerCSS),
           addStyleWithEnd(`
         #container #content_left{
-          & > div:not(:empty){
+          & > div:not(:empty)[class]{
             width: 55%;
             justify-self: center;
           }
@@ -3059,6 +3113,23 @@
       else log.error(`不支持的搜索结果显示模式: ` + mode);
       return result;
     },
+    ownBackgroundImage: (config) => {
+      log.info(`自定义背景图`);
+      return addStyleWithEnd(`
+      body:before {
+        pointer-events: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        content: "";
+        background-image: url("${config.url.trim()}");
+        background-size: 100% auto;
+        opacity: ${config.opacity ?? 0.8};
+      }
+    `);
+    },
   };
   var GoogleSearchResult = {
     init() {
@@ -3106,6 +3177,9 @@
   };
   var GoogleSearch = {
     init() {
+      Panel.execMenuOnce("google-search-removeAds", () => {
+        return this.removeAds();
+      });
       Panel.execMenuOnce("google-search-removeAIOverview", () => {
         return this.removeAIOverview();
       });
@@ -3124,7 +3198,29 @@
         if (utils$1.isNull(mode)) return;
         return this.searchResultShowOptimization(mode);
       });
+      Panel.execMenuOnce(
+        [
+          "google-search-ownBackgroundImage-enable",
+          "google-search-ownBackgroundImage-url",
+          "google-search-ownBackgroundImage-opacity",
+        ],
+        (config) => {
+          const [enable, url, opacity] = config.value;
+          if (!enable) return;
+          if (utils$1.isNull(url)) return;
+          if (!opacity) return;
+          return this.ownBackgroundImage({
+            enable,
+            url,
+            opacity,
+          });
+        }
+      );
       GoogleSearchResult.init();
+    },
+    removeAds() {
+      log.info(`移除广告`);
+      return addBlockCSS("#bottomads");
     },
     removeAIOverview() {
       log.info(`移除AI概览`);
@@ -3144,7 +3240,16 @@
     },
     searchResultShowOptimization(mode) {
       log.info(`搜索结果显示优化: ` + mode);
-      const result = [addBlockCSS(".kp-wholepage-osrp")];
+      const result = [
+        addBlockCSS(".kp-wholepage-osrp"),
+        addStyle(`
+        div[style*="top"] #searchform {
+            background-color: rgba(248, 248, 248, 0.4) !important;
+            border-bottom: none;
+            backdrop-filter: blur(10px)
+        }
+      `),
+      ];
       const titleHoverCSS = `
         #rso a,
         #rso a h3 {
@@ -3169,57 +3274,12 @@
         }
 
     `;
-      const centerCSS = `
-    #rcnt{
-        display: flex !important;
-        flex-direction: column;
-        width: 80%;
-        margin: 0 auto;
-    }
-    [id^="center_"][role="main"]{
-        display: flex;
-        flex-direction: column;
-        justify-self: center;
-    }
-    /* 隐藏空结果 */
-    #rso:not(:has(>script)) > div:empty,
-    #rso:not(:has(>script)) > div:not(:has([data-rpos])),
-    #rso:has(>script)>div:not(:empty)>div:not(:has(>div)){
-        display: none;
-    }
-    /* 顶部输入框居中 */
-    #searchform{
-        display: block;
-        justify-items: center;
-
-        >div{
-            justify-content: unset;
-        }
-
-        textarea{
-            min-width: 300px;
-        }
-
-        button[type="submit"]{
-            margin-right: 2em;
-        }
-    }
-    /* 顶部搜索结果选项导航栏居中 */
-    [data-st-tgt="fb"] > div:not(:empty){
-        display: block !important;
-    }
-    [data-st-tgt="fb"] > div:not(:empty) [role="navigation"]{
-        justify-self: center;
-    }
-    /* 小提示： 限制此搜索仅展示xxx搜索结果。 详细了解如何按语言过滤搜索结果 */
-    [id^="center_"][role="main"] #taw{
-      justify-items: center;
-    }
-    `;
+      const centerCSS =
+        '\n    #rcnt{\n        display: flex !important;\n        flex-direction: column;\n        width: 80%;\n        margin: 0 auto;\n    }\n    [id^="center_"][role="main"]{\n        display: flex;\n        flex-direction: column;\n        justify-self: center;\n    }\n    /* 隐藏空结果 */\n    #rso:not(:has(>script)) > div:empty,\n    #rso:not(:has(>script)) > div:not(:has([data-rpos])),\n    #rso:has(>script)>div:not(:empty)>div:not(:has(>div)){\n        display: none;\n    }\n    /* 顶部输入框居中 */\n    #searchform{\n        display: block;\n        justify-items: center;\n\n        >div{\n            justify-content: unset;\n        }\n\n        textarea{\n            min-width: 300px;\n        }\n\n        button[type="submit"]{\n            margin-right: 2em;\n        }\n    }\n    /* 顶部搜索结果选项导航栏居中 */\n    [data-st-tgt="fb"] > div:not(:empty){\n        display: block !important;\n    }\n    [data-st-tgt="fb"] > div:not(:empty) [role="navigation"]{\n        justify-self: center;\n    }\n    /* 小提示： 限制此搜索仅展示xxx搜索结果。 详细了解如何按语言过滤搜索结果 */\n    [id^="center_"][role="main"] #taw{\n        justify-items: center;\n    }\n    \n      /* 显示更多 */\n      .RDmXvc{\n          margin: 0 !important;\n          padding: 0 !important;\n      }\n      /* 展开的遮罩元素 */\n      [aria-controls="m-x-content"][aria-expanded]{\n          width: 100%;\n          text-align: center;\n      }\n      /* 提问输入框 */\n      .wPoHPd{\n        margin: 0px !important;\n        max-width: unset !important;\n      }\n      /* 内容 */\n      .mZJni{\n        max-width: unset !important;\n      }\n    ';
       const resultCSS = `
         /* 搜索结果的样式和标题的悬浮样式 */
         #rso:not(:has(>script)) > div:not(:empty) > div[data-rpos]:not(:empty),
-        #rso:has(>script)>div:not(:empty)>div:not(:empty):has(>div):not(:has(.related-question-pair)){
+        #rso:has(>script)>div:not(:empty)>div:not(:empty):has(>div):not(:has(.related-question-pair)):not(:has(#bottomads)){
             width: 100% !important;
             padding: 15px 20px;
             margin-top: 0px;
@@ -3295,6 +3355,23 @@
       else log.error(`不支持的搜索结果显示模式: ` + mode);
       return result;
     },
+    ownBackgroundImage: (config) => {
+      log.info(`自定义背景图`);
+      return addStyle(`
+      body:before {
+        pointer-events: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        content: "";
+        background-image: url("${config.url.trim()}");
+        background-size: 100% auto;
+        opacity: ${config.opacity ?? 0.8};
+      }
+    `);
+    },
   };
   var BingSearch = {
     init() {
@@ -3328,13 +3405,32 @@
         if (utils$1.isNull(mode)) return;
         return this.searchResultShowOptimization(mode);
       });
+      Panel.execMenuOnce(
+        [
+          "bing-search-ownBackgroundImage-enable",
+          "bing-search-ownBackgroundImage-url",
+          "bing-search-ownBackgroundImage-opacity",
+        ],
+        (config) => {
+          const [enable, url, opacity] = config.value;
+          if (!enable) return;
+          if (utils$1.isNull(url)) return;
+          if (!opacity) return;
+          return this.ownBackgroundImage({
+            enable,
+            url,
+            opacity,
+          });
+        }
+      );
     },
     removeAds() {
       return addBlockCSSWithEnd(
         "#b_bnp_bopc",
         "#b_topw:has(.b_ad)",
         "#b_results .b_ad",
-        "#b_results .b_algo:has(.jrwmcyhr)"
+        "#b_results .b_algo:has(.jrwmcyhr)",
+        ".b_vfly_c"
       );
     },
     removeInputPrediction() {
@@ -3390,7 +3486,15 @@
       );
     },
     searchResultShowOptimization(mode) {
-      const result = [];
+      const result = [
+        addBlockCSSWithEnd(`
+        header#b_header[style*="top"][role="banner"]{
+            background-color: rgba(248, 248, 248, 0.4) !important;
+            border-bottom: none !important;
+            backdrop-filter: blur(10px);
+        }
+      `),
+      ];
       const centerCSS = `
       #b_header {
           /* 输入框居中 */
@@ -3449,7 +3553,8 @@
       #b_results,
       #b_mcw {
         & .b_ans,
-        & .b_algo {
+        & .b_algo,
+        & .b_ans.b_vidAns {
             padding: 15px 20px;
             margin-top: 0;
             margin-left: 0;
@@ -3458,7 +3563,7 @@
             background-color: #fff;
             box-sizing: border-box;
             border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         & .b_ans,
@@ -3529,6 +3634,26 @@
         );
       return result;
     },
+    ownBackgroundImage: (config) => {
+      log.info(`自定义背景图`);
+      return addStyleWithEnd(`
+      body:before {
+        pointer-events: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        content: "";
+        background-image: url("${config.url.trim()}");
+        background-size: 100% auto;
+        opacity: ${config.opacity ?? 0.8};
+      }
+      #b_content{
+        background: transparent;
+      }
+    `);
+    },
   };
   var SearchEngine = {
     init() {
@@ -3543,6 +3668,98 @@
         BingSearch.init();
       }
     },
+  };
+  var UIInput = function (
+    text,
+    key,
+    defaultValue,
+    description,
+    changeCallback,
+    placeholder = "",
+    inputType = "text",
+    afterAddToUListCallBack,
+    valueChangeCallback
+  ) {
+    const result = {
+      text,
+      type: "input",
+      inputType,
+      attributes: {},
+      props: {},
+      description,
+      placeholder,
+      afterAddToUListCallBack,
+      getValue() {
+        return this.props[PROPS_STORAGE_API].get(key, defaultValue);
+      },
+      callback(event, value) {
+        const isValid = event.target.validity.valid;
+        if (typeof changeCallback === "function") {
+          if (changeCallback(event, value, isValid)) return;
+        }
+        this.props[PROPS_STORAGE_API].set(key, value);
+        if (typeof valueChangeCallback === "function") valueChangeCallback(event, value, isValid);
+      },
+    };
+    Reflect.set(result.attributes, ATTRIBUTE_KEY, key);
+    Reflect.set(result.attributes, ATTRIBUTE_DEFAULT_VALUE, defaultValue);
+    PanelComponents.initComponentsStorageApi("input", result, {
+      get(key, defaultValue) {
+        return Panel.getValue(key, defaultValue);
+      },
+      set(key, value) {
+        Panel.setValue(key, value);
+      },
+    });
+    return result;
+  };
+  var UISlider = function (
+    text,
+    key,
+    defaultValue,
+    min,
+    max,
+    changeCallback,
+    getToolTipContent,
+    description,
+    step,
+    valueChangeCallBack
+  ) {
+    const result = {
+      text,
+      type: "slider",
+      description,
+      attributes: {},
+      props: {},
+      getValue() {
+        return this.props[PROPS_STORAGE_API].get(key, defaultValue);
+      },
+      getToolTipContent(value) {
+        if (typeof getToolTipContent === "function") return getToolTipContent(value);
+        else return `${value}`;
+      },
+      callback(event, value) {
+        if (typeof changeCallback === "function") {
+          if (changeCallback(event, value)) return;
+        }
+        this.props[PROPS_STORAGE_API].set(key, value);
+        if (typeof valueChangeCallBack === "function") valueChangeCallBack(event, value);
+      },
+      min,
+      max,
+      step,
+    };
+    Reflect.set(result.attributes, ATTRIBUTE_KEY, key);
+    Reflect.set(result.attributes, ATTRIBUTE_DEFAULT_VALUE, defaultValue);
+    PanelComponents.initComponentsStorageApi("slider", result, {
+      get(key, defaultValue) {
+        return Panel.getValue(key, defaultValue);
+      },
+      set(key, value) {
+        Panel.setValue(key, value);
+      },
+    });
+    return result;
   };
   var UISwitch = function (
     text,
@@ -3909,6 +4126,25 @@
       },
       {
         type: "container",
+        text: "自定义背景图",
+        views: [
+          UISwitch("启用", "baidu-search-ownBackgroundImage-enable", true),
+          UIInput("图片地址", "baidu-search-ownBackgroundImage-url", BACKGROUND_URL, "url地址或base64图片"),
+          UISlider(
+            "图片透明度",
+            "baidu-search-ownBackgroundImage-opacity",
+            0.8,
+            0,
+            1,
+            void 0,
+            void 0,
+            "值越低越透明",
+            0.1
+          ),
+        ],
+      },
+      {
+        type: "container",
         text: "搜索结果优化",
         views: [
           UISwitch("启用", "baidu-search-optimizationResult-enable", true, void 0, "开启后下面的功能才会生效"),
@@ -3929,6 +4165,7 @@
         text: "通用",
         type: "container",
         views: [
+          UISwitch("移除广告", "google-search-removeAds", true),
           UISwitch("移除AI概览", "google-search-removeAIOverview", false),
           UISwitch("移除右侧栏", "google-search-removeRightPanel", true),
           UISwitch("移除用户还搜索了", "google-search-removeRelatedSearch", true),
@@ -3966,10 +4203,29 @@
       },
       {
         type: "container",
+        text: "自定义背景图",
+        views: [
+          UISwitch("启用", "google-search-ownBackgroundImage-enable", true),
+          UIInput("图片地址", "google-search-ownBackgroundImage-url", BACKGROUND_URL, "url地址或base64图片"),
+          UISlider(
+            "图片透明度",
+            "google-search-ownBackgroundImage-opacity",
+            0.8,
+            0,
+            1,
+            void 0,
+            void 0,
+            "值越低越透明",
+            0.1
+          ),
+        ],
+      },
+      {
+        type: "container",
         text: "搜索结果优化",
         views: [
           UISwitch("启用", "google-search-optimizationResult-enable", true),
-          UISwitch("新标签页打开", "google-search-optimizationResult-openBlank", false),
+          UISwitch("新标签页打开", "google-search-optimizationResult-openBlank", true),
         ],
       },
     ],
@@ -4024,6 +4280,25 @@
               value: "four-column-center",
             },
           ]),
+        ],
+      },
+      {
+        type: "container",
+        text: "自定义背景图",
+        views: [
+          UISwitch("启用", "bing-search-ownBackgroundImage-enable", true),
+          UIInput("图片地址", "bing-search-ownBackgroundImage-url", BACKGROUND_URL, "url地址或base64图片"),
+          UISlider(
+            "图片透明度",
+            "bing-search-ownBackgroundImage-opacity",
+            0.8,
+            0,
+            1,
+            void 0,
+            void 0,
+            "值越低越透明",
+            0.1
+          ),
         ],
       },
     ],

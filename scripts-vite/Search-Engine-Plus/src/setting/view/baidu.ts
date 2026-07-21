@@ -1,5 +1,6 @@
+import { BACKGROUND_URL } from "@/env";
 import { SearchEngineRouter } from "@/router/SearchEngineRouter";
-import { UISelect, UISwitch } from "@components/setting/panel-components";
+import { UIInput, UISelect, UISlider, UISwitch } from "@components/setting/panel-components";
 import type { PopsPanelContentConfig } from "@whitesev/pops/dist/types/src/components/panel/types/index.js";
 
 export const Component_Baidu: PopsPanelContentConfig = {
@@ -44,6 +45,25 @@ export const Component_Baidu: PopsPanelContentConfig = {
             value: "four-column-center",
           },
         ]),
+      ],
+    },
+    {
+      type: "container",
+      text: "自定义背景图",
+      views: [
+        UISwitch("启用", "baidu-search-ownBackgroundImage-enable", true),
+        UIInput("图片地址", "baidu-search-ownBackgroundImage-url", BACKGROUND_URL, "url地址或base64图片"),
+        UISlider(
+          "图片透明度",
+          "baidu-search-ownBackgroundImage-opacity",
+          0.8,
+          0,
+          1,
+          void 0,
+          void 0,
+          "值越低越透明",
+          0.1
+        ),
       ],
     },
     {

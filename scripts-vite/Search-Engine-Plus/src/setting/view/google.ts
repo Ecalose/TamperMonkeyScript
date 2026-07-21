@@ -1,5 +1,6 @@
+import { BACKGROUND_URL } from "@/env";
 import { SearchEngineRouter } from "@/router/SearchEngineRouter";
-import { UISelect, UISwitch } from "@components/setting/panel-components";
+import { UIInput, UISelect, UISlider, UISwitch } from "@components/setting/panel-components";
 import type { PopsPanelContentConfig } from "@whitesev/pops/dist/types/src/components/panel/types/index.js";
 
 export const Component_Google: PopsPanelContentConfig = {
@@ -11,6 +12,7 @@ export const Component_Google: PopsPanelContentConfig = {
       text: "通用",
       type: "container",
       views: [
+        UISwitch("移除广告", "google-search-removeAds", true),
         UISwitch("移除AI概览", "google-search-removeAIOverview", false),
         UISwitch("移除右侧栏", "google-search-removeRightPanel", true),
         UISwitch("移除用户还搜索了", "google-search-removeRelatedSearch", true),
@@ -48,10 +50,29 @@ export const Component_Google: PopsPanelContentConfig = {
     },
     {
       type: "container",
+      text: "自定义背景图",
+      views: [
+        UISwitch("启用", "google-search-ownBackgroundImage-enable", true),
+        UIInput("图片地址", "google-search-ownBackgroundImage-url", BACKGROUND_URL, "url地址或base64图片"),
+        UISlider(
+          "图片透明度",
+          "google-search-ownBackgroundImage-opacity",
+          0.8,
+          0,
+          1,
+          void 0,
+          void 0,
+          "值越低越透明",
+          0.1
+        ),
+      ],
+    },
+    {
+      type: "container",
       text: "搜索结果优化",
       views: [
         UISwitch("启用", "google-search-optimizationResult-enable", true),
-        UISwitch("新标签页打开", "google-search-optimizationResult-openBlank", false),
+        UISwitch("新标签页打开", "google-search-optimizationResult-openBlank", true),
         // UISwitch("移除广告", "google-search-optimizationResult-removeAds", true),
         // UISwitch("链接重定向", "google-search-optimizationResult-redirect", true),
       ],

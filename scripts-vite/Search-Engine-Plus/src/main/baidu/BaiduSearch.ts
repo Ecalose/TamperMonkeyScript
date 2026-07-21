@@ -23,6 +23,24 @@ export const BaiduSearch = {
       if (utils.isNull(mode)) return;
       return this.searchResultShowOptimization(mode);
     });
+    Panel.execMenuOnce(
+      [
+        "baidu-search-ownBackgroundImage-enable",
+        "baidu-search-ownBackgroundImage-url",
+        "baidu-search-ownBackgroundImage-opacity",
+      ],
+      (config) => {
+        const [enable, url, opacity] = config.value;
+        if (!enable) return;
+        if (utils.isNull(url)) return;
+        if (!opacity) return;
+        return this.ownBackgroundImage({
+          enable,
+          url,
+          opacity,
+        });
+      }
+    );
     BaiduSearchResult.init();
   },
   /**
@@ -63,7 +81,8 @@ export const BaiduSearch = {
       return /*css*/ `
         #container #content_left{
         & > .c-container,
-        & > .new-pmd{
+        & > .new-pmd,
+        & > .c-group-wrapper{
           ${resultCardCSSText}
         }
 
@@ -89,6 +108,14 @@ export const BaiduSearch = {
       `
         )
       ),
+      // 顶部head样式
+      addStyleWithEnd(/*css*/ `
+        #wrapper #head{
+            background-color: rgba(248, 248, 248, 0.4) !important;
+            border-bottom: none;
+            backdrop-filter: blur(10px);
+        }
+      `),
     ];
 
     /** 标题鼠标悬浮背景色 */
@@ -189,13 +216,11 @@ export const BaiduSearch = {
       }
 
       `;
-    const resultCSS = resultContainerCSS(
+    const resultCardCSSText = resultContainerCSS(
       /*css*/ `
         &{
           padding: 15px 20px;
-          margin-top: 0;
-          margin-left: 0;
-          margin-bottom: 30px;
+          margin: 0 0 30px 0;
           border-radius: 8px;
           background-color: #fff;
           box-sizing: border-box;
@@ -265,6 +290,16 @@ export const BaiduSearch = {
           border: 0px;
         }
       }
+      /* 顶部的百度AI 大型卡片容器 */
+      .c-group-wrapper{
+        margin: 0px 0px 30px 0px !important;
+
+        & > .c-container,
+        & > .new-pmd{
+          padding: 0px !important;
+          width: 100% !important;
+        }
+      }
     `
     );
     const moreColumnCSS = resultContainerCSS(
@@ -290,14 +325,14 @@ export const BaiduSearch = {
       }
     `
     );
-    result.push(addStyleWithEnd(resultCSS), addStyleWithEnd(titleHoverCSS));
+    result.push(addStyleWithEnd(resultCardCSSText), addStyleWithEnd(titleHoverCSS));
     if (mode === "single-center") {
       // 单列居中
       result.push(
         addStyleWithEnd(centerCSS),
         addStyleWithEnd(/*css*/ `
         #container #content_left{
-          & > div:not(:empty){
+          & > div:not(:empty)[class]{
             width: 55%;
             justify-self: center;
           }
@@ -352,5 +387,25 @@ export const BaiduSearch = {
     }
 
     return result;
+  },
+  /**
+   * 自定义背景图
+   */
+  ownBackgroundImage: (config: { enable: boolean; url: string; opacity: number }) => {
+    log.info(`自定义背景图`);
+    return addStyleWithEnd(/*css*/ `
+      body:before {
+        pointer-events: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        content: "";
+        background-image: url("${config.url.trim()}");
+        background-size: 100% auto;
+        opacity: ${config.opacity ?? 0.8};
+      }
+    `);
   },
 };

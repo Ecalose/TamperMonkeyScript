@@ -34,6 +34,24 @@ export const BingSearch = {
       if (utils.isNull(mode)) return;
       return this.searchResultShowOptimization(mode);
     });
+    Panel.execMenuOnce(
+      [
+        "bing-search-ownBackgroundImage-enable",
+        "bing-search-ownBackgroundImage-url",
+        "bing-search-ownBackgroundImage-opacity",
+      ],
+      (config) => {
+        const [enable, url, opacity] = config.value;
+        if (!enable) return;
+        if (utils.isNull(url)) return;
+        if (!opacity) return;
+        return this.ownBackgroundImage({
+          enable,
+          url,
+          opacity,
+        });
+      }
+    );
   },
   /**
    * 移除广告
@@ -46,7 +64,9 @@ export const BingSearch = {
       "#b_topw:has(.b_ad)",
       "#b_results .b_ad",
       // 网页结果广告
-      "#b_results .b_algo:has(.jrwmcyhr)"
+      "#b_results .b_algo:has(.jrwmcyhr)",
+      // 扫描二维码下载微软必应app，立即开始搜索并赚取积分奖励！
+      ".b_vfly_c"
     );
   },
   /**
@@ -126,7 +146,16 @@ export const BingSearch = {
    * 搜索结果显示优化
    */
   searchResultShowOptimization(mode: SearchResultShowType) {
-    const result: any[] = [];
+    const result: any[] = [
+      // 顶部head样式
+      addBlockCSSWithEnd(/*css*/ `
+        header#b_header[style*="top"][role="banner"]{
+            background-color: rgba(248, 248, 248, 0.4) !important;
+            border-bottom: none !important;
+            backdrop-filter: blur(10px);
+        }
+      `),
+    ];
 
     const centerCSS = /*css*/ `
       #b_header {
@@ -187,7 +216,8 @@ export const BingSearch = {
       #b_results,
       #b_mcw {
         & .b_ans,
-        & .b_algo {
+        & .b_algo,
+        & .b_ans.b_vidAns {
             padding: 15px 20px;
             margin-top: 0;
             margin-left: 0;
@@ -196,7 +226,7 @@ export const BingSearch = {
             background-color: #fff;
             box-sizing: border-box;
             border: 1px solid rgba(0, 0, 0, 0.1);
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05) !important;
             transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
         & .b_ans,
@@ -274,5 +304,28 @@ export const BingSearch = {
     }
 
     return result;
+  },
+  /**
+   * 自定义背景图
+   */
+  ownBackgroundImage: (config: { enable: boolean; url: string; opacity: number }) => {
+    log.info(`自定义背景图`);
+    return addStyleWithEnd(/*css*/ `
+      body:before {
+        pointer-events: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        content: "";
+        background-image: url("${config.url.trim()}");
+        background-size: 100% auto;
+        opacity: ${config.opacity ?? 0.8};
+      }
+      #b_content{
+        background: transparent;
+      }
+    `);
   },
 };

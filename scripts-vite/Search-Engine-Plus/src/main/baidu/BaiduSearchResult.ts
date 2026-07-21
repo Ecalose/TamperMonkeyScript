@@ -1,4 +1,4 @@
-import { $$, DOMUtils, log, utils } from "@/env";
+import { $$, DOMUtils, httpx, log, utils } from "@/env";
 import { addBlockCSSWithEnd, addStyleWithEnd } from "@components/env.base";
 import { Panel } from "@components/setting/panel";
 
@@ -31,13 +31,29 @@ export const BaiduSearchResult = {
   }) {
     log.info(`搜索结果优化`, config);
 
+    /**
+     * 判断是否是百度的中转重定向链接
+     *
+     * + http://www.baidu.com/link?url=xxxx
+     * @param url
+     */
+    const isDirectUrl = (url: string) => {
+      try {
+        const urlInst = new URL(url);
+        if (urlInst.hostname === "www.baidu.com" && urlInst.pathname === "/link" && urlInst.searchParams.has("url")) {
+          return true;
+        }
+      } catch {}
+      return false;
+    };
+
     const lockFn = new utils.LockFunction(() => {
       const $results = $$("#content_left > div:not([data-hijack])");
-      for (const $result of $results) {
+      $results.forEach(async ($result) => {
         if (config.removeAds && DOMUtils.selector('.se_st_footer:contains("广告")', $result)) {
           // 移除广告
           $result.remove();
-          continue;
+          return;
         }
         /** 标题 */
         const $title =
@@ -45,7 +61,7 @@ export const BaiduSearchResult = {
           $result.querySelector<HTMLAnchorElement>(".c-title a[href]") ||
           $result.querySelector<HTMLAnchorElement>("a.cosc-title-a[href]") ||
           $result.querySelector<HTMLAnchorElement>('[class*="c-line-"] > a[href][class^="title_"]');
-        if (!$title) continue;
+        if (!$title) return;
         /** 真实链接，但有时候这个链接是错误的链接，需要处理一下 */
         const mu = $result.getAttribute("mu");
         const realLinkList: string[] = [];
@@ -62,28 +78,46 @@ export const BaiduSearchResult = {
           }
         }
 
-        const realLink = realLinkList.find((link) => {
+        let realLink = realLinkList.find((link) => {
           try {
             const linkInst = new URL(link);
             if (linkInst.hostname === "nourl.ubs.baidu.com" || linkInst.hostname.endsWith(".lightapp.baidu.com")) {
               return;
             }
-            if (
-              linkInst.hostname === "www.baidu.com" &&
-              linkInst.pathname === "/link" &&
-              linkInst.searchParams.has("url")
-            ) {
-              // 百度的中转重定向链接
-              // http://www.baidu.com/link?url=xxxx
+            if (isDirectUrl(link)) {
               return;
             }
           } catch {}
           return link;
         });
-
-        if (!realLink) continue;
+        const titleUrl = $title.getAttribute("href")!.trim();
+        if (!realLink) {
+          // 依旧没有获取到真实链接
+          // 使用get请求获取
+          const requestAttr = "data-direct-http-request-ing";
+          if ($title.hasAttribute(requestAttr)) {
+            // ignore
+            return;
+          } else if (isDirectUrl(titleUrl)) {
+            // 百度中转链接
+            // 主动请求获取重定向的链接
+            $title.setAttribute(requestAttr, "true");
+            const response = await httpx.get(titleUrl, {
+              fetch: false,
+              allowInterceptConfig: false,
+            });
+            $title.removeAttribute(requestAttr);
+            if (!response.status) return;
+            const finalUrl = response.data.finalUrl;
+            if (isDirectUrl(finalUrl)) return;
+            realLink = finalUrl;
+            $title.setAttribute("data-request-final-url", "true");
+          } else {
+            return;
+          }
+        }
         $result.setAttribute("data-hijack", "true");
-        const titleUrl = $title.getAttribute("href")!;
+        // 下面是在获取到真实链接后才能添加的功能
         if (config.redirect) {
           // 重定向
           $title.href = realLink;
@@ -121,7 +155,7 @@ export const BaiduSearchResult = {
             });
           }
         }
-      }
+      });
     });
     const observer = utils.mutationObserver(document, {
       config: {

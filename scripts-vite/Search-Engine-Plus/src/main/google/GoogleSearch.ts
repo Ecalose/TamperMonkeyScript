@@ -5,6 +5,9 @@ import { GoogleSearchResult } from "./GoogleSearchResult";
 
 export const GoogleSearch = {
   init() {
+    Panel.execMenuOnce("google-search-removeAds", () => {
+      return this.removeAds();
+    });
     Panel.execMenuOnce("google-search-removeAIOverview", () => {
       return this.removeAIOverview();
     });
@@ -23,7 +26,32 @@ export const GoogleSearch = {
       if (utils.isNull(mode)) return;
       return this.searchResultShowOptimization(mode);
     });
+    Panel.execMenuOnce(
+      [
+        "google-search-ownBackgroundImage-enable",
+        "google-search-ownBackgroundImage-url",
+        "google-search-ownBackgroundImage-opacity",
+      ],
+      (config) => {
+        const [enable, url, opacity] = config.value;
+        if (!enable) return;
+        if (utils.isNull(url)) return;
+        if (!opacity) return;
+        return this.ownBackgroundImage({
+          enable,
+          url,
+          opacity,
+        });
+      }
+    );
     GoogleSearchResult.init();
+  },
+  /**
+   * 移除广告
+   */
+  removeAds() {
+    log.info(`移除广告`);
+    return addBlockCSS("#bottomads");
   },
   /**
    * 移除AI概览
@@ -59,7 +87,17 @@ export const GoogleSearch = {
   searchResultShowOptimization(mode: SearchResultShowType) {
     log.info(`搜索结果显示优化: ` + mode);
 
-    const result: any[] = [addBlockCSS(".kp-wholepage-osrp")];
+    const result: any[] = [
+      addBlockCSS(".kp-wholepage-osrp"),
+      // 顶部head样式
+      addStyle(/*css*/ `
+        div[style*="top"] #searchform {
+            background-color: rgba(248, 248, 248, 0.4) !important;
+            border-bottom: none;
+            backdrop-filter: blur(10px)
+        }
+      `),
+    ];
 
     const titleHoverCSS = /*css*/ `
         #rso a,
@@ -86,7 +124,8 @@ export const GoogleSearch = {
 
     `;
 
-    const centerCSS = /*css*/ `
+    const centerCSS =
+      /*css*/ `
     #rcnt{
         display: flex !important;
         flex-direction: column;
@@ -130,13 +169,35 @@ export const GoogleSearch = {
     }
     /* 小提示： 限制此搜索仅展示xxx搜索结果。 详细了解如何按语言过滤搜索结果 */
     [id^="center_"][role="main"] #taw{
-      justify-items: center;
+        justify-items: center;
     }
+    ` +
+      /* AI 概览 */
+      /*css*/ `
+      /* 显示更多 */
+      .RDmXvc{
+          margin: 0 !important;
+          padding: 0 !important;
+      }
+      /* 展开的遮罩元素 */
+      [aria-controls="m-x-content"][aria-expanded]{
+          width: 100%;
+          text-align: center;
+      }
+      /* 提问输入框 */
+      .wPoHPd{
+        margin: 0px !important;
+        max-width: unset !important;
+      }
+      /* 内容 */
+      .mZJni{
+        max-width: unset !important;
+      }
     `;
     const resultCSS = /*css*/ `
         /* 搜索结果的样式和标题的悬浮样式 */
         #rso:not(:has(>script)) > div:not(:empty) > div[data-rpos]:not(:empty),
-        #rso:has(>script)>div:not(:empty)>div:not(:empty):has(>div):not(:has(.related-question-pair)){
+        #rso:has(>script)>div:not(:empty)>div:not(:empty):has(>div):not(:has(.related-question-pair)):not(:has(#bottomads)){
             width: 100% !important;
             padding: 15px 20px;
             margin-top: 0px;
@@ -220,5 +281,25 @@ export const GoogleSearch = {
     }
 
     return result;
+  },
+  /**
+   * 自定义背景图
+   */
+  ownBackgroundImage: (config: { enable: boolean; url: string; opacity: number }) => {
+    log.info(`自定义背景图`);
+    return addStyle(/*css*/ `
+      body:before {
+        pointer-events: none;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        content: "";
+        background-image: url("${config.url.trim()}");
+        background-size: 100% auto;
+        opacity: ${config.opacity ?? 0.8};
+      }
+    `);
   },
 };
