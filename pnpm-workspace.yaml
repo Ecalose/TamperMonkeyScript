@@ -1,5 +1,6 @@
 packages:
   - 'scripts-vite/**'
+  - '!lib/**'
 
 # pnpm >= 11
 allowBuilds:
