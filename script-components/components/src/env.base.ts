@@ -128,7 +128,7 @@ const MenuRegister = new utils.GM_Menu({
 
 const httpx = new utils.Httpx({
   xmlHttpRequest: GM_xmlhttpRequest,
-  logDetails: false,
+  isConsoleRequestOption: false,
 });
 
 // 添加请求拦截器
