@@ -31,25 +31,25 @@ export class Httpx {
     /**
      * 发送请求前的回调
      * 如果返回false则阻止本次返回
-     * @param details 当前的请求配置
+     * @param requestOption 当前的请求配置
      * @private
      */
-    async beforeRequestCallBack(details: HttpxRequestOption) {
-      if (typeof details.allowInterceptConfig === "boolean") {
-        if (!details.allowInterceptConfig) {
+    async beforeRequestCallBack(requestOption: HttpxRequestOption) {
+      if (typeof requestOption.allowInterceptConfig === "boolean") {
+        if (!requestOption.allowInterceptConfig) {
           // 不允许拦截
-          return details;
+          return requestOption;
         }
       } else {
-        if (details.allowInterceptConfig != null) {
+        if (requestOption.allowInterceptConfig != null) {
           // 配置存在
           // 细分处理是否拦截
           if (
-            typeof details.allowInterceptConfig.beforeRequest === "boolean" &&
-            !details.allowInterceptConfig.beforeRequest
+            typeof requestOption.allowInterceptConfig.beforeRequest === "boolean" &&
+            !requestOption.allowInterceptConfig.beforeRequest
           ) {
             // 设置了禁止拦截
-            return details;
+            return requestOption;
           }
         } else {
           // 配置不存在
@@ -59,13 +59,13 @@ export class Httpx {
       for (let index = 0; index < this.$config.configList.length; index++) {
         const item = this.$config.configList[index];
         if (typeof item.fn === "function") {
-          const result = await item.fn(details);
+          const result = await item.fn(requestOption);
           if (result == null) {
             return;
           }
         }
       }
-      return details;
+      return requestOption;
     },
     /**
      * 添加请求前的回调处理配置
@@ -119,24 +119,24 @@ export class Httpx {
     /**
      * 成功的回调
      * @param response 响应
-     * @param details 请求的配置
+     * @param requestOption 请求的配置
      */
-    async successResponseCallBack(response: HttpxResponseData<HttpxRequestOption>, details: HttpxRequestOption) {
-      if (typeof details.allowInterceptConfig === "boolean") {
-        if (!details.allowInterceptConfig) {
+    async successResponseCallBack(response: HttpxResponseData<HttpxRequestOption>, requestOption: HttpxRequestOption) {
+      if (typeof requestOption.allowInterceptConfig === "boolean") {
+        if (!requestOption.allowInterceptConfig) {
           // 不允许拦截
-          return details;
+          return requestOption;
         }
       } else {
-        if (details.allowInterceptConfig != null) {
+        if (requestOption.allowInterceptConfig != null) {
           // 配置存在
           // 细分处理是否拦截
           if (
-            typeof details.allowInterceptConfig.afterResponseSuccess === "boolean" &&
-            !details.allowInterceptConfig.afterResponseSuccess
+            typeof requestOption.allowInterceptConfig.afterResponseSuccess === "boolean" &&
+            !requestOption.allowInterceptConfig.afterResponseSuccess
           ) {
             // 设置了禁止拦截
-            return details;
+            return requestOption;
           }
         } else {
           // 配置不存在
@@ -146,7 +146,7 @@ export class Httpx {
       for (let index = 0; index < this.$config.configList.length; index++) {
         const item = this.$config.configList[index];
         if (typeof item.successFn === "function") {
-          const result = await item.successFn(response, details);
+          const result = await item.successFn(response, requestOption);
           if (result == null) {
             return;
           }
@@ -161,18 +161,18 @@ export class Httpx {
      * 返回null|undefined就是拦截掉了
      */
     async errorResponseCallBack<T extends HttpxHookErrorData>(data: T) {
-      if (typeof data.details.allowInterceptConfig === "boolean") {
-        if (!data.details.allowInterceptConfig) {
+      if (typeof data.requestOption.allowInterceptConfig === "boolean") {
+        if (!data.requestOption.allowInterceptConfig) {
           // 不允许拦截
           return data;
         }
       } else {
-        if (data.details.allowInterceptConfig != null) {
+        if (data.requestOption.allowInterceptConfig != null) {
           // 配置存在
           // 细分处理是否拦截
           if (
-            typeof data.details.allowInterceptConfig.afterResponseError === "boolean" &&
-            !data.details.allowInterceptConfig.afterResponseError
+            typeof data.requestOption.allowInterceptConfig.afterResponseError === "boolean" &&
+            !data.requestOption.allowInterceptConfig.afterResponseError
           ) {
             // 设置了禁止拦截
             return data;
@@ -236,17 +236,17 @@ export class Httpx {
         url: void 0 as any as string,
       };
       if (typeof args[0] === "string") {
-        /* 传入的是url，转为配置 */
+        //  传入的是url，转为配置
         const url = args[0];
         option.url = url;
         if (typeof args[1] === "object") {
-          /* 处理第二个参数details */
+          //  处理第二个参数
           const optionArg = args[1];
           CommonUtil.assign(option, optionArg, true);
           option.url = url;
         }
       } else {
-        /* 传入的是配置 */
+        //  传入的是配置
         const optionArg = args[0];
         CommonUtil.assign(option, optionArg, true);
       }
@@ -284,7 +284,7 @@ export class Httpx {
         method: (method || "GET").toString().toUpperCase().trim(),
         timeout: userRequestOption.timeout || this.context.#defaultRequestOption.timeout,
         responseType: userRequestOption.responseType || this.context.#defaultRequestOption.responseType,
-        /* 对象使用深拷贝 */
+        //  对象使用深拷贝
         headers: CommonUtil.deepClone(this.context.#defaultRequestOption.headers),
         data: userRequestOption.data || this.context.#defaultRequestOption.data,
         redirect: userRequestOption.redirect || this.context.#defaultRequestOption.redirect,
@@ -293,12 +293,12 @@ export class Httpx {
         binary: userRequestOption.binary || this.context.#defaultRequestOption.binary,
         nocache: userRequestOption.nocache || this.context.#defaultRequestOption.nocache,
         revalidate: userRequestOption.revalidate || this.context.#defaultRequestOption.revalidate,
-        /* 对象使用深拷贝 */
+        //  对象使用深拷贝
         context: CommonUtil.deepClone(userRequestOption.context || this.context.#defaultRequestOption.context),
         overrideMimeType: userRequestOption.overrideMimeType || this.context.#defaultRequestOption.overrideMimeType,
         anonymous: userRequestOption.anonymous || this.context.#defaultRequestOption.anonymous,
         fetch: userRequestOption.fetch || this.context.#defaultRequestOption.fetch,
-        /* 对象使用深拷贝 */
+        //  对象使用深拷贝
         fetchInit: CommonUtil.deepClone(this.context.#defaultRequestOption.fetchInit),
         allowInterceptConfig: {
           beforeRequest: (this.context.#defaultRequestOption.allowInterceptConfig as HttpxAllowInterceptConfig)
@@ -394,27 +394,27 @@ export class Httpx {
           const headerKeys = Object.keys(requestOption.headers);
           headerKeys.forEach((keyName) => {
             if (keyName in requestOption.headers && userRequestOption!.headers?.[keyName] == null) {
-              /* 在默认的header中存在，且设置它新的值为空，那么就是默认的值 */
+              //  在默认的header中存在，且设置它新的值为空，那么就是默认的值
               Reflect.deleteProperty(requestOption.headers, keyName);
             } else {
               requestOption.headers[keyName] = userRequestOption?.headers?.[keyName];
             }
           });
         } else {
-          /* details.headers为空 */
-          /* 不做处理 */
+          //  .headers为空
+          //  不做处理
         }
       } else {
-        /* 默认的headers不是对象，那么就直接使用新的 */
+        //  默认的headers不是对象，那么就直接使用新的
         Reflect.set(requestOption, "headers", userRequestOption.headers);
       }
       if (typeof requestOption.fetchInit === "object") {
-        /* 使用assign替换且添加 */
+        //  使用assign替换且添加
         if (typeof userRequestOption.fetchInit === "object") {
           const fetchInitKeys = Object.keys(requestOption.fetchInit);
           fetchInitKeys.forEach((keyName) => {
             if (keyName in requestOption.fetchInit && Reflect.get(userRequestOption.fetchInit ?? {}, keyName) == null) {
-              /* 在默认的fetchInit中存在，且设置它新的值为空，那么就是默认的值 */
+              //  在默认的fetchInit中存在，且设置它新的值为空，那么就是默认的值
               Reflect.deleteProperty(requestOption.fetchInit, keyName);
             } else {
               Reflect.set(requestOption.fetchInit, keyName, Reflect.get(userRequestOption.fetchInit!, keyName));
@@ -436,7 +436,7 @@ export class Httpx {
         }
       }
 
-      /* 完善请求的url */
+      //  完善请求的url
       try {
         new URL(requestOption.url);
       } catch {
@@ -459,7 +459,7 @@ export class Httpx {
 
       // 转换data类型
       try {
-        /** 是否对数据进行处理 */
+        // * 是否对数据进行处理
         const processData = userRequestOption.processData ?? true;
         if (requestOption.data != null && processData) {
           const method = requestOption.method;
@@ -570,10 +570,10 @@ export class Httpx {
        **/
       const fetchRequestOption = <RequestInit>{};
       if ((option.method === "GET" || option.method === "HEAD") && option.data != null) {
-        /* GET 或 HEAD 方法的请求不能包含 body 信息 */
+        //  GET 或 HEAD 方法的请求不能包含 body 信息
         Reflect.deleteProperty(option, "data");
       }
-      /* 中止信号控制器 */
+      //  中止信号控制器
       const abortController = new AbortController();
       const signal = abortController.signal;
       signal.onabort = () => {
@@ -618,20 +618,19 @@ export class Httpx {
     context: this,
     /**
      * onabort请求被取消-触发
-     * @param details 配置
+     * @param requestOption 配置
      * @param resolve promise回调
      * @param _reject promise抛出错误回调
      * @param argsResult 返回的参数列表
      */
     async onAbort(
-      details: Required<HttpxRequestOption>,
-      resolve: (resultOption: HttpxResponse<HttpxRequestOption>) => void,
+      requestOption: Required<HttpxRequestOption>,
+      resolve: (responseOption: HttpxResponse<HttpxRequestOption>) => void,
       _reject: (...args: any[]) => void,
       argsResult: any
     ) {
-      // console.log(argsResult);
-      if (typeof details?.onabort === "function") {
-        details.onabort.apply(this, argsResult);
+      if (typeof requestOption?.onabort === "function") {
+        requestOption.onabort.apply(this, argsResult);
       } else if (typeof this.context.#defaultRequestOption?.onabort === "function") {
         this.context.#defaultRequestOption.onabort.apply(this, argsResult);
       }
@@ -642,9 +641,9 @@ export class Httpx {
       if (
         (await this.context.HttpxResponseHook.errorResponseCallBack({
           type: "onabort",
-          error: new Error("request canceled"),
+          error: new Error("request cancel"),
           response: null,
-          details: details,
+          requestOption: requestOption,
         })) == null
       ) {
         // reject(new Error("response is intercept with onabort"));
@@ -652,7 +651,7 @@ export class Httpx {
       }
       resolve({
         data: response,
-        details: details,
+        requestOption,
         msg: "请求被取消",
         status: false,
         statusCode: -1,
@@ -661,21 +660,20 @@ export class Httpx {
     },
     /**
      * ontimeout请求超时-触发
-     * @param details 配置
+     * @param requestOption 配置
      * @param resolve 回调
      * @param reject 抛出错误
      * @param argsResult 返回的参数列表
      */
     async onTimeout(
-      details: Required<HttpxRequestOption>,
-      resolve: (resultOption: HttpxResponse<HttpxRequestOption>) => void,
+      requestOption: Required<HttpxRequestOption>,
+      resolve: (responseOption: HttpxResponse<HttpxRequestOption>) => void,
       _reject: (...args: any[]) => void,
       argsResult: any
     ) {
-      // console.log(argsResult);
-      if (typeof details?.ontimeout === "function") {
+      if (typeof requestOption?.ontimeout === "function") {
         // 执行配置中的ontime回调
-        details.ontimeout.apply(this, argsResult);
+        requestOption.ontimeout.apply(this, argsResult);
       } else if (typeof this.context.#defaultRequestOption?.ontimeout === "function") {
         // 执行默认配置的ontime回调
         this.context.#defaultRequestOption.ontimeout.apply(this, argsResult);
@@ -689,9 +687,9 @@ export class Httpx {
       if (
         (await this.context.HttpxResponseHook.errorResponseCallBack({
           type: "ontimeout",
-          error: new Error("request timeout"),
+          error: new Error("request timeout in " + requestOption.timeout + "ms"),
           response: response,
-          details: details,
+          requestOption: requestOption,
         })) == null
       ) {
         // reject(new Error("response is intercept with ontimeout"));
@@ -699,7 +697,7 @@ export class Httpx {
       }
       resolve({
         data: response,
-        details: details,
+        requestOption: requestOption,
         msg: "请求超时",
         status: false,
         statusCode: 0,
@@ -708,20 +706,21 @@ export class Httpx {
     },
     /**
      * onerror请求异常-触发
-     * @param details 配置
+     * @param requestOption 配置
      * @param resolve 回调
      * @param _reject 抛出错误
      * @param argsResult 返回的参数列表
+     * @param reason 错误原因
      */
     async onError(
-      details: Required<HttpxRequestOption>,
-      resolve: (resultOption: HttpxResponse<HttpxRequestOption>) => void,
+      requestOption: Required<HttpxRequestOption>,
+      resolve: (responseOption: HttpxResponse<HttpxRequestOption>) => void,
       _reject: (...args: any[]) => void,
-      argsResult: any
+      argsResult: any,
+      reason?: string
     ) {
-      // console.log(argsResult);
-      if (typeof details?.onerror === "function") {
-        details.onerror.apply(this, argsResult);
+      if (typeof requestOption?.onerror === "function") {
+        requestOption.onerror.apply(this, argsResult);
       } else if (typeof this.context.#defaultRequestOption?.onerror === "function") {
         this.context.#defaultRequestOption.onerror.apply(this, argsResult);
       }
@@ -732,9 +731,9 @@ export class Httpx {
       if (
         (await this.context.HttpxResponseHook.errorResponseCallBack({
           type: "onerror",
-          error: new Error("request error"),
+          error: new Error(reason ?? "request error"),
           response: response,
-          details: details,
+          requestOption: requestOption,
         })) == null
       ) {
         // reject(new Error("response is intercept with onerror"));
@@ -742,7 +741,7 @@ export class Httpx {
       }
       resolve({
         data: response,
-        details: details,
+        requestOption: requestOption,
         msg: "请求异常",
         status: false,
         statusCode: response["status"],
@@ -751,21 +750,21 @@ export class Httpx {
     },
     /**
      * onload加载完毕-触发
-     * @param details 请求的配置
+     * @param requestOption 请求的配置
      * @param resolve 回调
      * @param _reject 抛出错误
      * @param argsResult 返回的参数列表
      */
     async onLoad(
-      details: Required<HttpxRequestOption>,
-      resolve: (resultOption: HttpxResponse<HttpxRequestOption>) => void,
+      requestOption: Required<HttpxRequestOption>,
+      resolve: (responseOption: HttpxResponse<HttpxRequestOption>) => void,
       _reject: (...args: any[]) => void,
       argsResult: any[]
     ) {
       // console.log(argsResult);
-      /* X浏览器会因为设置了responseType导致不返回responseText */
+      //  X浏览器会因为设置了responseType导致不返回responseText
       const originResponse: HttpxResponseData<HttpxRequestOption> = argsResult[0];
-      /* responseText为空，response不为空的情况 */
+      //  responseText为空，response不为空的情况
       if (CommonUtil.isNull(originResponse["responseText"]) && CommonUtil.isNotNull(originResponse["response"])) {
         if (typeof originResponse["response"] === "object") {
           TryCatch().run(() => {
@@ -776,26 +775,26 @@ export class Httpx {
         }
       }
 
-      /* response为空，responseText不为空的情况 */
+      //  response为空，responseText不为空的情况
       if (
         originResponse["response"] == null &&
         typeof originResponse["responseText"] === "string" &&
         originResponse["responseText"].trim() !== ""
       ) {
-        /** 原始的请求text */
+        // * 原始的请求text
         const httpxResponseText = originResponse.responseText;
         // 自定义个新的response
         let httpxResponse: any = httpxResponseText;
-        if (details.responseType === "json") {
+        if (requestOption.responseType === "json") {
           httpxResponse = CommonUtil.toJSON(httpxResponseText);
-        } else if (details.responseType === "document") {
+        } else if (requestOption.responseType === "document") {
           const parser = new DOMParser();
           httpxResponse = parser.parseFromString(httpxResponseText, "text/html");
-        } else if (details.responseType === "arraybuffer") {
+        } else if (requestOption.responseType === "arraybuffer") {
           const encoder = new TextEncoder();
           const arrayBuffer = encoder.encode(httpxResponseText);
           httpxResponse = arrayBuffer;
-        } else if (details.responseType === "blob") {
+        } else if (requestOption.responseType === "blob") {
           const encoder = new TextEncoder();
           const arrayBuffer = encoder.encode(httpxResponseText);
           httpxResponse = new Blob([arrayBuffer]);
@@ -820,65 +819,72 @@ export class Httpx {
           }
         }
       }
-      /* Stay扩展中没有finalUrl，对应的是responseURL */
+      //  Stay扩展中没有finalUrl，对应的是responseURL
       const originResponseURL = Reflect.get(originResponse, "responseURL");
       if (originResponse["finalUrl"] == null && originResponseURL != null) {
         Reflect.set(originResponse, "finalUrl", originResponseURL);
       }
 
-      /* 状态码2xx都是成功的 */
+      //  状态码2xx都是成功的
       if (Math.floor(originResponse.status / 100) === 2) {
-        if ((await this.context.HttpxResponseHook.successResponseCallBack(originResponse, details)) == null) {
+        if ((await this.context.HttpxResponseHook.successResponseCallBack(originResponse, requestOption)) == null) {
           // reject(new Error("response is intercept with onloada"));
           return;
         }
         resolve({
           data: originResponse,
-          details: details,
+          requestOption: requestOption,
           msg: "请求成功",
           status: true,
           statusCode: originResponse.status,
           type: "onload",
         });
       } else {
-        this.context.HttpxResponseCallBack.onError(details, resolve, _reject, argsResult);
+        // 请求失败
+        this.context.HttpxResponseCallBack.onError(
+          requestOption,
+          resolve,
+          _reject,
+          argsResult,
+          "response status is not 2xx"
+        );
       }
     },
     /**
      * onloadstart请求开始-触发
-     * @param details 配置
+     * @param requestOption 配置
      * @param argsResult 返回的参数列表
      */
-    onLoadStart(details: Required<HttpxRequestOption>, argsResult: any[]) {
+    onLoadStart(requestOption: Required<HttpxRequestOption>, argsResult: any[]) {
       // console.log(argsResult);
-      if (typeof details?.onloadstart === "function") {
-        details.onloadstart.apply(this, argsResult);
+      if (typeof requestOption?.onloadstart === "function") {
+        requestOption.onloadstart.apply(this, argsResult);
       } else if (typeof this.context.#defaultRequestOption?.onloadstart === "function") {
         this.context.#defaultRequestOption.onloadstart.apply(this, argsResult);
       }
     },
     /**
      * onreadystatechange准备状态改变-触发
-     * @param details 配置
+     * @param requestOption 配置
      * @param argsResult 返回的参数列表
      */
-    onReadyStateChange(details: Required<HttpxRequestOption>, argsResult: any[]) {
+    onReadyStateChange(requestOption: Required<HttpxRequestOption>, argsResult: any[]) {
       // console.log(argsResult);
-      if (typeof details?.onreadystatechange === "function") {
-        details.onreadystatechange.apply(this, argsResult);
+      if (typeof requestOption?.onreadystatechange === "function") {
+        requestOption.onreadystatechange.apply(this, argsResult);
       } else if (typeof this.context.#defaultRequestOption?.onreadystatechange === "function") {
         this.context.#defaultRequestOption.onreadystatechange.apply(this, argsResult);
       }
     },
     /**
      * onprogress上传进度-触发
-     * @param details 配置
+     * @param requestOption 配置
      * @param argsResult 返回的参数列表
      */
-    onProgress(details: Required<HttpxRequestOption>, argsResult: any[]) {
+    onProgress(requestOption: Required<HttpxRequestOption>, argsResult: any[]) {
       // console.log(argsResult);
-      if (typeof details?.onprogress === "function") {
-        details.onprogress.apply(this, argsResult);
+      if (typeof requestOption?.onprogress === "function") {
+        requestOption.onprogress.apply(this, argsResult);
       } else if (typeof this.context.#defaultRequestOption?.onprogress === "function") {
         this.context.#defaultRequestOption.onprogress.apply(this, argsResult);
       }
@@ -888,37 +894,37 @@ export class Httpx {
     context: this,
     /**
      * 发送请求
-     * @param details
+     * @param requestOption
      */
-    async request(details: Required<HttpxRequestOption>) {
-      if (this.context.#defaultInitOption.logDetails) {
-        console.log("[Httpx-HttpxRequest.request] 请求前的配置👇", details);
+    async request(requestOption: Required<HttpxRequestOption>) {
+      if (this.context.#defaultInitOption.isConsoleRequestOption) {
+        console.log("[Httpx-HttpxRequest.request] 请求前的配置👇", requestOption);
       }
       if (typeof this.context.HttpxRequestHook.beforeRequestCallBack === "function") {
-        const hookResult = await this.context.HttpxRequestHook.beforeRequestCallBack(details);
+        const hookResult = await this.context.HttpxRequestHook.beforeRequestCallBack(requestOption);
         if (hookResult == null) {
           return;
         }
       }
-      if (details.fetch) {
+      if (requestOption.fetch) {
         // 使用fetch请求
         const {
           fetchOption: fetchOption,
           fetchRequestOption: fetchRequestOption,
           abortController,
-        } = this.context.HttpxRequestOption.handleFetchOption(details);
+        } = this.context.HttpxRequestOption.handleFetchOption(requestOption);
         return this.fetch(fetchOption, fetchRequestOption, abortController);
       } else {
         // 使用GM_xmlHttpRequest请求
-        return this.xmlHttpRequest(details);
+        return this.xmlHttpRequest(requestOption);
       }
     },
     /**
      * 使用油猴函数GM_xmlhttpRequest发送请求
-     * @param details
+     * @param requestOption
      */
-    xmlHttpRequest(details: Required<HttpxRequestOption>) {
-      return this.context.GM_Api.xmlHttpRequest!(details) as {
+    xmlHttpRequest(requestOption: Required<HttpxRequestOption>) {
+      return this.context.GM_Api.xmlHttpRequest!(requestOption) as {
         abort: () => void;
       };
     },
@@ -931,7 +937,7 @@ export class Httpx {
     fetch(option: Required<HttpxRequestOption>, fetchRequestOption: RequestInit, abortController: AbortController) {
       fetch(option.url, fetchRequestOption)
         .then(async (fetchResponse) => {
-          /** 自定义的response */
+          // * 自定义的response
           const httpxResponse: HttpxResponseData<HttpxRequestOption> = {
             isFetch: true,
             finalUrl: fetchResponse.url,
@@ -952,10 +958,10 @@ export class Httpx {
             httpxResponse.responseHeaders += `${key}: ${value}\n`;
           });
 
-          /** 请求返回的类型 */
+          // * 请求返回的类型
           const fetchResponseType = fetchResponse.headers.get("Content-Type");
 
-          /* 如果需要stream，且获取到的是stream，那直接返回 */
+          //  如果需要stream，且获取到的是stream，那直接返回
           if (
             option.responseType === "stream" ||
             (fetchResponse.headers.has("Content-Type") &&
@@ -969,16 +975,16 @@ export class Httpx {
             return;
           }
 
-          /** 响应 */
+          // * 响应
           let response: any = "";
-          /** 响应字符串 */
+          // * 响应字符串
           let responseText: string = "";
-          /** 响应xml文档 */
+          // * 响应xml文档
           let responseXML: XMLDocument | string = "";
-          /** 先获取二进制数据 */
+          // * 先获取二进制数据
           const arrayBuffer = await fetchResponse.arrayBuffer();
 
-          /** 数据编码 */
+          // * 数据编码
           let encoding = "utf-8";
           if (fetchResponse.headers.has("Content-Type")) {
             const charsetMatched = fetchResponse.headers.get("Content-Type")?.match(/charset=(.+)/);
@@ -1098,9 +1104,11 @@ export class Httpx {
      */
     baseURL: void 0 as undefined | string,
     /**
-     * 当前使用请求时，输出请求的配置，一般用于DEBUG|DEV
+     * （可选）是否在控制台输出请求配置
+     *
+     * 一般用于DEBUG|DEV
      */
-    logDetails: false,
+    isConsoleRequestOption: false,
   };
   /**
    * 实例化
@@ -1141,7 +1149,7 @@ export class Httpx {
        * 添加拦截器
        * @param fn 设置的请求前回调函数，如果返回配置，则使用返回的配置，如果返回null|undefined，则阻止请求
        */
-      use(fn: <T extends Required<HttpxRequestOption>>(details: T) => void | T | Promise<void | T>) {
+      use(fn: <T extends Required<HttpxRequestOption>>(requestOption: T) => void | T | Promise<void | T>) {
         if (typeof fn !== "function") {
           console.warn("[Httpx-interceptors-request] 请传入拦截器函数");
           return;
@@ -1177,7 +1185,7 @@ export class Httpx {
       use(
         successFn?: <T extends HttpxResponseData<HttpxRequestOption>>(
           response: T,
-          details: HttpxRequestOption
+          requestOption: HttpxRequestOption
         ) => void | T,
         errorFn?: <T extends HttpxHookErrorData>(data: T) => void | T | Promise<void | T>
       ) {
@@ -1211,17 +1219,17 @@ export class Httpx {
   }
   /**
    * GET 请求
-   * @param details 配置
+   * @param requestOption 配置
    */
-  get<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+  get<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
   /**
    * GET 请求
    * @param url 请求的url
-   * @param details 配置
+   * @param requestOption 配置
    */
   get<T extends Omit<HttpxRequestOption, "url">>(
     url: string,
-    details?: T
+    requestOption?: T
   ): HttpxPromise<
     HttpxResponse<
       T & {
@@ -1234,8 +1242,6 @@ export class Httpx {
   >;
   /**
    * GET 请求
-   * @param url 请求的url
-   * @param details 配置
    */
   get(...args: (string | HttpxRequestOption)[]): HttpxPromise<HttpxResponse<HttpxRequestOption>> {
     const useRequestOption = this.HttpxRequestOption.handleBeforeRequestOptionArgs(...args);
@@ -1246,17 +1252,17 @@ export class Httpx {
   }
   /**
    * POST 请求
-   * @param details 配置
+   * @param requestOption 配置
    */
-  post<T extends HttpxRequestOption>(details?: T): HttpxPromise<HttpxResponse<T>>;
+  post<T extends HttpxRequestOption>(requestOption?: T): HttpxPromise<HttpxResponse<T>>;
   /**
    * POST 请求
    * @param url 请求的url
-   * @param details 配置
+   * @param requestOption 配置
    */
   post<T extends Omit<HttpxRequestOption, "url">>(
     url: string,
-    details?: T
+    requestOption?: T
   ): HttpxPromise<
     HttpxResponse<
       T & {
@@ -1277,17 +1283,17 @@ export class Httpx {
   }
   /**
    * HEAD 请求
-   * @param details 配置
+   * @param requestOption 配置
    */
-  head<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+  head<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
   /**
    * HEAD 请求
    * @param url 请求的url
-   * @param details 配置
+   * @param requestOption 配置
    */
   head<T extends Omit<HttpxRequestOption, "url">>(
     url: string,
-    details?: T
+    requestOption?: T
   ): HttpxPromise<
     HttpxResponse<
       T & {
@@ -1310,17 +1316,17 @@ export class Httpx {
   }
   /**
    * OPTIONS 请求
-   * @param details 配置
+   * @param requestOption 配置
    */
-  options<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+  options<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
   /**
    * OPTIONS 请求
    * @param url 请求的url
-   * @param details 配置
+   * @param requestOption 配置
    */
   options<T extends Omit<HttpxRequestOption, "url">>(
     url: string,
-    details?: T
+    requestOption?: T
   ): HttpxPromise<
     HttpxResponse<
       T & {
@@ -1343,17 +1349,17 @@ export class Httpx {
   }
   /**
    * DELETE 请求
-   * @param details 配置
+   * @param requestOption 配置
    */
-  delete<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+  delete<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
   /**
    * DELETE 请求
    * @param url 请求的url
-   * @param details 配置
+   * @param requestOption 配置
    */
   delete<T extends Omit<HttpxRequestOption, "url">>(
     url: string,
-    details?: T
+    requestOption?: T
   ): HttpxPromise<
     HttpxResponse<
       T & {
@@ -1376,17 +1382,17 @@ export class Httpx {
   }
   /**
    * PUT 请求
-   * @param details 配置
+   * @param requestOption 配置
    */
-  put<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+  put<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
   /**
    * PUT 请求
    * @param url 请求的url
-   * @param details 配置
+   * @param requestOption 配置
    */
   put<T extends Omit<HttpxRequestOption, "url">>(
     url: string,
-    details?: T
+    requestOption?: T
   ): HttpxPromise<
     HttpxResponse<
       T & {
@@ -1407,15 +1413,15 @@ export class Httpx {
   }
   /**
    * 发送请求
-   * @param details 配置
+   * @param requestOption 配置
    * @param beforeRequestOption 处理请求前的配置
    */
   request<T extends HttpxRequestOption>(
-    details: T,
+    requestOption: T,
     beforeRequestOption?: (option: Required<T | HttpxRequestOption>) => void
   ): HttpxPromise<HttpxResponse<T>> {
     // 对请求的参数进行合并处理
-    const userRequestOption = this.HttpxRequestOption.handleBeforeRequestOptionArgs(details);
+    const userRequestOption = this.HttpxRequestOption.handleBeforeRequestOptionArgs(requestOption);
 
     /**
      * 取消请求

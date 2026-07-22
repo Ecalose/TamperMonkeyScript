@@ -30,7 +30,7 @@ export declare class Httpx {
              * 添加拦截器
              * @param fn 设置的请求前回调函数，如果返回配置，则使用返回的配置，如果返回null|undefined，则阻止请求
              */
-            use(fn: <T extends Required<HttpxRequestOption>>(details: T) => void | T | Promise<void | T>): string | undefined;
+            use(fn: <T extends Required<HttpxRequestOption>>(requestOption: T) => void | T | Promise<void | T>): string | undefined;
             /**
              * 移除拦截器
              * @param id 通过use返回的id
@@ -53,7 +53,7 @@ export declare class Httpx {
              * @param errorFn 设置的响应后回调函数，如果返回响应，则使用返回的响应，如果返回null|undefined，则阻止响应
              * + 超出 2xx 范围的状态码都会触发该函数
              */
-            use(successFn?: <T extends HttpxResponseData<HttpxRequestOption>>(response: T, details: HttpxRequestOption) => void | T, errorFn?: <T extends HttpxHookErrorData>(data: T) => void | T | Promise<void | T>): string | undefined;
+            use(successFn?: <T extends HttpxResponseData<HttpxRequestOption>>(response: T, requestOption: HttpxRequestOption) => void | T, errorFn?: <T extends HttpxHookErrorData>(data: T) => void | T | Promise<void | T>): string | undefined;
             /**
              * 移除拦截器
              * @param id 通过use返回的id
@@ -72,15 +72,15 @@ export declare class Httpx {
     setXMLHttpRequest(httpRequest: (...args: any[]) => any): void;
     /**
      * GET 请求
-     * @param details 配置
+     * @param requestOption 配置
      */
-    get<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+    get<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
     /**
      * GET 请求
      * @param url 请求的url
-     * @param details 配置
+     * @param requestOption 配置
      */
-    get<T extends Omit<HttpxRequestOption, "url">>(url: string, details?: T): HttpxPromise<HttpxResponse<T & {
+    get<T extends Omit<HttpxRequestOption, "url">>(url: string, requestOption?: T): HttpxPromise<HttpxResponse<T & {
         /**
          * 请求的url
          */
@@ -88,15 +88,15 @@ export declare class Httpx {
     }>>;
     /**
      * POST 请求
-     * @param details 配置
+     * @param requestOption 配置
      */
-    post<T extends HttpxRequestOption>(details?: T): HttpxPromise<HttpxResponse<T>>;
+    post<T extends HttpxRequestOption>(requestOption?: T): HttpxPromise<HttpxResponse<T>>;
     /**
      * POST 请求
      * @param url 请求的url
-     * @param details 配置
+     * @param requestOption 配置
      */
-    post<T extends Omit<HttpxRequestOption, "url">>(url: string, details?: T): HttpxPromise<HttpxResponse<T & {
+    post<T extends Omit<HttpxRequestOption, "url">>(url: string, requestOption?: T): HttpxPromise<HttpxResponse<T & {
         /**
          * 请求的url
          */
@@ -104,15 +104,15 @@ export declare class Httpx {
     }>>;
     /**
      * HEAD 请求
-     * @param details 配置
+     * @param requestOption 配置
      */
-    head<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+    head<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
     /**
      * HEAD 请求
      * @param url 请求的url
-     * @param details 配置
+     * @param requestOption 配置
      */
-    head<T extends Omit<HttpxRequestOption, "url">>(url: string, details?: T): HttpxPromise<HttpxResponse<T & {
+    head<T extends Omit<HttpxRequestOption, "url">>(url: string, requestOption?: T): HttpxPromise<HttpxResponse<T & {
         /**
          * 请求的url
          */
@@ -120,15 +120,15 @@ export declare class Httpx {
     }>>;
     /**
      * OPTIONS 请求
-     * @param details 配置
+     * @param requestOption 配置
      */
-    options<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+    options<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
     /**
      * OPTIONS 请求
      * @param url 请求的url
-     * @param details 配置
+     * @param requestOption 配置
      */
-    options<T extends Omit<HttpxRequestOption, "url">>(url: string, details?: T): HttpxPromise<HttpxResponse<T & {
+    options<T extends Omit<HttpxRequestOption, "url">>(url: string, requestOption?: T): HttpxPromise<HttpxResponse<T & {
         /**
          * 请求的url
          */
@@ -136,15 +136,15 @@ export declare class Httpx {
     }>>;
     /**
      * DELETE 请求
-     * @param details 配置
+     * @param requestOption 配置
      */
-    delete<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+    delete<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
     /**
      * DELETE 请求
      * @param url 请求的url
-     * @param details 配置
+     * @param requestOption 配置
      */
-    delete<T extends Omit<HttpxRequestOption, "url">>(url: string, details?: T): HttpxPromise<HttpxResponse<T & {
+    delete<T extends Omit<HttpxRequestOption, "url">>(url: string, requestOption?: T): HttpxPromise<HttpxResponse<T & {
         /**
          * 请求的url
          */
@@ -152,15 +152,15 @@ export declare class Httpx {
     }>>;
     /**
      * PUT 请求
-     * @param details 配置
+     * @param requestOption 配置
      */
-    put<T extends HttpxRequestOption>(details: T): HttpxPromise<HttpxResponse<T>>;
+    put<T extends HttpxRequestOption>(requestOption: T): HttpxPromise<HttpxResponse<T>>;
     /**
      * PUT 请求
      * @param url 请求的url
-     * @param details 配置
+     * @param requestOption 配置
      */
-    put<T extends Omit<HttpxRequestOption, "url">>(url: string, details?: T): HttpxPromise<HttpxResponse<T & {
+    put<T extends Omit<HttpxRequestOption, "url">>(url: string, requestOption?: T): HttpxPromise<HttpxResponse<T & {
         /**
          * 请求的url
          */
@@ -168,8 +168,8 @@ export declare class Httpx {
     }>>;
     /**
      * 发送请求
-     * @param details 配置
+     * @param requestOption 配置
      * @param beforeRequestOption 处理请求前的配置
      */
-    request<T extends HttpxRequestOption>(details: T, beforeRequestOption?: (option: Required<T | HttpxRequestOption>) => void): HttpxPromise<HttpxResponse<T>>;
+    request<T extends HttpxRequestOption>(requestOption: T, beforeRequestOption?: (option: Required<T | HttpxRequestOption>) => void): HttpxPromise<HttpxResponse<T>>;
 }

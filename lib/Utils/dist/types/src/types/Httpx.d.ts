@@ -1283,7 +1283,7 @@ export declare interface HttpxResponse<T extends HttpxRequestOption> {
   /**
    * 请求的配置
    */
-  details: T;
+  requestOption: T;
   /**
    * 请求的成功/失败消息
    */
@@ -1313,7 +1313,7 @@ export declare interface HttpxHookErrorData {
   /**
    * 请求的配置
    */
-  details: HttpxRequestOption;
+  requestOption: HttpxRequestOption;
 }
 
 /**
@@ -1336,9 +1336,11 @@ export declare interface HttpxInitOption extends HttpxRequestOption {
    */
   baseURL?: string | undefined;
   /**
-   * （可选）是否输出请求配置
+   * （可选）是否在控制台输出请求配置
+   *
+   * 一般用于DEBUG|DEV
    */
-  logDetails?: boolean;
+  isConsoleRequestOption?: boolean;
 }
 
 export type HttpxRequestOptionWithDoubleParams = Omit<HttpxRequestOption, "url">;
