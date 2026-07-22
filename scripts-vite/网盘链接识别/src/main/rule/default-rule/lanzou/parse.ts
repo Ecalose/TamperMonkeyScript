@@ -502,7 +502,12 @@ export class NetDiskParse_Lanzou extends ParseFileCore {
         const ajaxmResponseData = ajaxmResponse.data;
         log.info(ajaxmResponseData);
 
-        const json_data = utils.toJSON(ajaxmResponseData.responseText);
+        const json_data = utils.toJSON<{
+          zt: number;
+          dom: string;
+          url: number | string;
+          inf: string;
+        }>(ajaxmResponseData.responseText);
         let downloadUrl = `${json_data["dom"]}/file/${json_data["url"]}`;
         if (
           typeof json_data["url"] === "string" &&
@@ -514,7 +519,7 @@ export class NetDiskParse_Lanzou extends ParseFileCore {
         // json_data["zt"]表示状态，一般为1
         const zt = json_data["zt"];
         // json_data["inf"]一般是文件名，也可以看作是请求信息提示
-        if ("密码不正确".indexOf(json_data["inf"]) != -1) {
+        if ("密码不正确".includes(json_data["inf"]) || "密码错误".includes(json_data["inf"])) {
           Qmsg.error("密码不正确!");
           const newAccessCodeInfo = await new Promise<
             | undefined
