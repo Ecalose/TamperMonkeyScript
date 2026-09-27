@@ -185,17 +185,17 @@ export const MTEditorOptimizationNormal = {
                               <ul id="comiis_smilies_key">
                                   <li>
                                       <a href="javascript:;" id="comiis_smilies_tab_n_1" class="bg_f b_l b_r">
-                                          <img loading="lazy" data-src="https://cdn-bbs.mt2.cn/static/image/smiley/qq/qq063.gif" class="vm">
+                                          <img loading="lazy" data-src="https://cdn.binmt.cc/static/image/smiley/qq/qq063.gif" class="vm">
                                       </a>
                                   </li>
                                   <li>
                                       <a href="javascript:;" id="comiis_smilies_tab_n_2" class="">
-                                          <img loading="lazy" data-src="https://cdn-bbs.mt2.cn/static/image/smiley/comiis_tb/tb_10.png" class="vm">
+                                          <img loading="lazy" data-src="https://cdn.binmt.cc/static/image/smiley/comiis_tb/tb_10.png" class="vm">
                                       </a>
                                   </li>
                                   <li>
                                       <a href="javascript:;" id="comiis_smilies_tab_n_3" class="">
-                                          <img loading="lazy" data-src="https://cdn-bbs.mt2.cn/static/image/smiley/doge/21.png" class="vm">
+                                          <img loading="lazy" data-src="https://cdn.binmt.cc/static/image/smiley/doge/21.png" class="vm">
                                       </a>
                                   </li>
                               </ul>

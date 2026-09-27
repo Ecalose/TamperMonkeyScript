@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         【移动端】MT论坛优化
 // @namespace    https://github.com/WhiteSevs/TamperMonkeyScript
-// @version      2026.9.12
+// @version      2026.9.27
 // @author       WhiteSevs
 // @description  MT论坛效果增强，如自动签到、自动展开帖子、滚动加载评论、显示UID、自定义屏蔽、手机版小黑屋、编辑器优化、在线用户查看、便捷式图床、自定义用户标签、积分商城商品上架提醒等
 // @license      GPL-3.0-only
@@ -15,7 +15,7 @@
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/domutils@2.0.8/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/@whitesev/pops@4.2.9/dist/index.umd.js
 // @require      https://fastly.jsdelivr.net/npm/qmsg@1.7.2/dist/index.umd.js
-// @require      https://fastly.jsdelivr.net/npm/viewerjs@1.13.0/dist/viewer.js
+// @require      https://fastly.jsdelivr.net/npm/viewerjs@1.14.0/dist/viewer.js
 // @require      https://fastly.jsdelivr.net/npm/@highlightjs/cdn-assets@11.12.0/highlight.min.js
 // @resource     HljsCSS    https://fastly.jsdelivr.net/npm/highlight.js@11.12.0/styles/github-dark.min.css
 // @resource     ViewerCSS  https://fastly.jsdelivr.net/npm/viewerjs@1.12.0/dist/viewer.min.css

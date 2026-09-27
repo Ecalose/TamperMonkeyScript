@@ -571,6 +571,10 @@ export const MTForumPost = {
         pathName: "^(/static(/|//)image|/template)",
       },
       {
+        hostName: "cdn.binmt.cc",
+        pathName: "^(/static(/|//)image|/template)",
+      },
+      {
         hostName: window.location.hostname,
         pathName: "^(/static(/|//)image|/template)",
       },
